@@ -10,7 +10,7 @@ import { MovieFilters } from '@/components/movie-filters'
 import { MobileSortSelector } from '@/components/mobile-sort-selector'
 import { useLocalStorage } from '@/hooks/use-local-storage'
 import { MovieFilters as Filters, initialFilters, applyFilters, getGenresFromMovies, getYearRange, getRuntimeRange, hasActiveFilters } from '@/lib/filter-utils'
-import { SortConfig, SortKey, defaultSort, sortMovies } from '@/lib/sort-utils'
+import { SortConfig, SortKey, SortDirection, defaultSort, sortMovies } from '@/lib/sort-utils'
 
 const STORAGE_KEY = 'netflix-imdb-country'
 const FILTERS_STORAGE_KEY = 'netflix-imdb-filters'
@@ -63,9 +63,9 @@ function App() {
 
   // Sort change handler
   const handleSortChange = (key: SortKey) => {
-    setSortConfig(prev => ({
+    setSortConfig((prev: SortConfig) => ({
       key,
-      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+      direction: (prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc') as SortDirection
     }))
   }
 
