@@ -9,6 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        // Original variants (unchanged for backwards compatibility)
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
@@ -34,6 +35,14 @@ const buttonVariants = cva(
           "text-white font-bold border border-cyan-400/50",
           "shadow-[0_0_15px_rgba(34,211,238,0.5)]",
           "hover:shadow-[0_0_25px_rgba(34,211,238,0.8)]",
+        ].join(" "),
+        
+        neonPurple: [
+          "bg-gradient-to-r from-purple-500 via-violet-500 to-purple-500",
+          "bg-[length:200%_auto] hover:bg-[position:right_center]",
+          "text-white font-bold border border-purple-400/50",
+          "shadow-[0_0_15px_rgba(168,85,247,0.5)]",
+          "hover:shadow-[0_0_25px_rgba(168,85,247,0.8)]",
         ].join(" "),
         
         glowOutline: [

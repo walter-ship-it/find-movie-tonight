@@ -7,8 +7,8 @@ function Skeleton({
   return (
     <div
       className={cn(
-        "rounded-md bg-muted",
-        "relative overflow-hidden",
+        "rounded-md bg-muted/50 relative overflow-hidden",
+        // Shimmer effect
         "before:absolute before:inset-0",
         "before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent",
         "before:animate-shimmer before:bg-[length:200%_100%]",
