@@ -3,18 +3,21 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const cardVariants = cva(
-  "rounded-lg border text-card-foreground transition-all duration-500 ease-expo-out",
+  "rounded-lg text-card-foreground transition-all duration-500 ease-expo-out",
   {
     variants: {
       variant: {
-        default: "bg-card border-border shadow-sm",
+        // Default - unchanged for backwards compatibility
+        default: "border bg-card shadow-sm",
         
+        // Glass - frosted glass effect
         glass: [
           "bg-white/5 backdrop-blur-xl",
           "border border-white/10",
-          "shadow-glass shadow-purple-500/5",
+          "shadow-glass",
         ].join(" "),
         
+        // Neon - glowing border effect
         neon: [
           "bg-card border-2 border-primary/50",
           "shadow-[0_0_15px_hsl(var(--primary)/0.3)]",
@@ -22,19 +25,29 @@ const cardVariants = cva(
           "hover:border-primary",
         ].join(" "),
         
+        // Holographic - multi-color animated gradient
         holographic: [
           "bg-gradient-to-br from-pink-500/10 via-purple-500/10 to-cyan-500/10",
           "border border-white/20",
           "backdrop-blur-sm",
           "hover:from-pink-500/20 hover:via-purple-500/20 hover:to-cyan-500/20",
+          "relative overflow-hidden",
         ].join(" "),
         
+        // Movie - optimized for poster cards
         movie: [
           "bg-card/80 backdrop-blur-sm",
           "border border-border/50",
           "overflow-hidden",
           "hover:scale-[1.02] hover:shadow-xl hover:shadow-primary/20",
           "hover:border-primary/50",
+        ].join(" "),
+        
+        // Elevated - subtle elevation with glow
+        elevated: [
+          "bg-card border border-border",
+          "shadow-lg shadow-black/20",
+          "hover:shadow-xl hover:shadow-primary/10",
         ].join(" "),
       },
     },

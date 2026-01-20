@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* Y2K Dark Theme (Primary) - Blue-tinted near-black */
+    /* Y2K Dark Theme (Default) */
     --background: 240 10% 4%;
     --foreground: 0 0% 95%;
     
@@ -38,7 +38,7 @@
     
     --radius: 0.75rem;
     
-    /* Custom Y2K Variables */
+    /* Y2K Neon Color Variables */
     --neon-pink: 330 100% 71%;
     --neon-cyan: 187 99% 50%;
     --neon-purple: 275 100% 70%;
@@ -60,12 +60,14 @@
     --ease-expo-in-out: cubic-bezier(0.87, 0, 0.13, 1);
   }
   
-  /* Light mode (keep for accessibility fallback) */
+  /* Light mode fallback (keep for accessibility) */
   .light {
     --background: 0 0% 100%;
     --foreground: 240 10% 10%;
     --card: 0 0% 98%;
     --card-foreground: 240 10% 10%;
+    --popover: 0 0% 98%;
+    --popover-foreground: 240 10% 10%;
     --primary: 330 100% 50%;
     --primary-foreground: 0 0% 100%;
     --secondary: 187 80% 40%;
@@ -90,7 +92,7 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
-  /* Scrollbar styling for Y2K aesthetic */
+  /* Y2K Scrollbar Styling */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -127,7 +129,7 @@
   /* Animated gradient text */
   .text-gradient-animated {
     @apply bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent;
-    background-size: 300% 100%;
+    background-size: 300% 300%;
     animation: gradient-x 8s ease infinite;
   }
   
@@ -136,9 +138,22 @@
     @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-glass;
   }
   
+  /* Strong glass effect */
+  .glass-strong {
+    @apply bg-white/10 backdrop-blur-2xl border border-white/20 shadow-glass-lg;
+  }
+  
   /* Neon border glow */
   .neon-border {
     @apply border-2 border-primary shadow-neon-pink;
+  }
+  
+  .neon-border-cyan {
+    @apply border-2 border-secondary shadow-neon-cyan;
+  }
+  
+  .neon-border-purple {
+    @apply border-2 border-accent shadow-neon-purple;
   }
   
   /* Chrome/metallic surface */
@@ -148,7 +163,7 @@
   
   /* Glow on hover */
   .hover-glow {
-    @apply transition-all duration-500 ease-expo-out;
+    @apply transition-shadow duration-500 ease-expo-out;
   }
   
   .hover-glow:hover {
@@ -179,13 +194,14 @@
     inset: 0;
     background: radial-gradient(
       600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-      hsla(var(--primary) / 0.1) 0%,
+      hsl(var(--primary) / 0.1) 0%,
       transparent 40%
     );
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.5s var(--ease-expo-out);
     border-radius: inherit;
+    z-index: 0;
   }
   
   .cursor-glow:hover::before {
@@ -193,32 +209,10 @@
   }
   
   /* Staggered reveal animation */
-  .animate-reveal-stagger > * {
+  .animate-reveal-item {
     opacity: 0;
-    animation: reveal 0.6s var(--ease-expo-out) forwards;
-  }
-  
-  .animate-reveal-stagger > *:nth-child(1) { animation-delay: 0ms; }
-  .animate-reveal-stagger > *:nth-child(2) { animation-delay: 50ms; }
-  .animate-reveal-stagger > *:nth-child(3) { animation-delay: 100ms; }
-  .animate-reveal-stagger > *:nth-child(4) { animation-delay: 150ms; }
-  .animate-reveal-stagger > *:nth-child(5) { animation-delay: 200ms; }
-  .animate-reveal-stagger > *:nth-child(6) { animation-delay: 250ms; }
-  .animate-reveal-stagger > *:nth-child(7) { animation-delay: 300ms; }
-  .animate-reveal-stagger > *:nth-child(8) { animation-delay: 350ms; }
-  .animate-reveal-stagger > *:nth-child(9) { animation-delay: 400ms; }
-  .animate-reveal-stagger > *:nth-child(10) { animation-delay: 450ms; }
-  
-  /* Shimmer effect for skeletons */
-  .shimmer {
-    background: linear-gradient(
-      90deg,
-      hsl(var(--muted)) 0%,
-      hsl(var(--muted-foreground) / 0.1) 50%,
-      hsl(var(--muted)) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 2s linear infinite;
+    transform: translateY(20px);
+    animation: reveal 0.5s var(--ease-expo-out) forwards;
   }
   
   /* Noise texture overlay */
@@ -226,14 +220,28 @@
     content: '';
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     opacity: 0.03;
     pointer-events: none;
-    border-radius: inherit;
+    mix-blend-mode: overlay;
+  }
+  
+  /* Holographic shimmer effect */
+  .holographic {
+    background: linear-gradient(
+      115deg,
+      transparent 20%,
+      hsl(200 80% 60% / 0.15) 36%,
+      hsl(320 80% 70% / 0.15) 42%,
+      hsl(260 80% 65% / 0.15) 48%,
+      transparent 64%
+    );
+    background-size: 200% 200%;
+    animation: shimmer 3s linear infinite;
   }
 }
 
-/* Keyframes */
+/* Custom keyframes */
 @keyframes gradient-x {
   0%, 100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -250,23 +258,21 @@
   }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-/* Custom mesh gradient animation */
 @keyframes mesh-move {
-  0% { background-position: 0% 0%, 100% 100%, 0% 50%, 100% 50%, 0% 100%; }
-  50% { background-position: 100% 100%, 0% 0%, 100% 50%, 0% 50%, 100% 0%; }
-  100% { background-position: 0% 0%, 100% 100%, 0% 50%, 100% 50%, 0% 100%; }
+  0%, 100% { 
+    background-position: 0% 0%, 100% 100%, 0% 50%, 100% 50%, 0% 100%, 100% 0%; 
+  }
+  50% { 
+    background-position: 100% 100%, 0% 0%, 100% 50%, 0% 50%, 100% 0%, 0% 100%; 
+  }
 }
 
+/* Mesh background animation */
 .animate-mesh {
   animation: mesh-move 20s ease infinite;
 }
 
-/* Reduced motion support */
+/* Reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -285,30 +291,36 @@
   }
 }
 
-/* Radix Slider Y2K styling */
+/* Radix UI Slider Y2K Styling */
 [data-radix-slider-track] {
-  background: linear-gradient(90deg, hsl(var(--muted)), hsl(var(--muted)));
-  position: relative;
-  overflow: hidden;
+  @apply bg-muted relative overflow-hidden rounded-full;
+}
+
+[data-radix-slider-track]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
+  animation: shimmer 2s linear infinite;
+  background-size: 200% 100%;
 }
 
 [data-radix-slider-range] {
+  @apply absolute h-full rounded-full;
   background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
-  box-shadow: 0 0 10px hsl(var(--primary) / 0.5);
 }
 
 [data-radix-slider-thumb] {
-  background: hsl(var(--primary));
-  border: 2px solid hsl(var(--background));
-  box-shadow: 0 0 10px hsl(var(--primary) / 0.8);
-  transition: all 0.2s var(--ease-expo-out);
+  @apply block h-5 w-5 rounded-full border-2 border-primary bg-background;
+  box-shadow: 0 0 10px hsl(var(--primary) / 0.5);
+  transition: box-shadow 0.2s var(--ease-expo-out), transform 0.2s var(--ease-expo-out);
 }
 
 [data-radix-slider-thumb]:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 20px hsl(var(--primary));
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.8);
+  transform: scale(1.1);
 }
 
 [data-radix-slider-thumb]:focus {
-  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.3), 0 0 20px hsl(var(--primary));
+  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
 }

@@ -6,17 +6,26 @@ import { cn } from '@/lib/utils'
 
 interface MovieCardProps {
   movie: Movie
-  index?: number
+  index?: number // For staggered animation
 }
 
 export function MovieCard({ movie, index = 0 }: MovieCardProps) {
   return (
     <div 
-      className="group relative animate-reveal"
-      style={{ animationDelay: `${index * 50}ms` }}
+      className="group relative"
+      style={{ 
+        animationDelay: `${index * 50}ms`,
+      }}
     >
-      {/* Glow effect on hover */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-600 rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-all duration-500 ease-expo-out" />
+      {/* Glow effect on hover - Active Theory inspired */}
+      <div 
+        className={cn(
+          "absolute -inset-1 rounded-xl blur-lg opacity-0",
+          "bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-600",
+          "transition-opacity duration-500 ease-expo-out",
+          "group-hover:opacity-60"
+        )} 
+      />
       
       {/* Card content */}
       <Card variant="movie" className="relative">
@@ -28,7 +37,11 @@ export function MovieCard({ movie, index = 0 }: MovieCardProps) {
                 <img
                   src={movie.poster_url}
                   alt={`${movie.title} poster`}
-                  className="w-[48px] h-[72px] object-cover transition-transform duration-500 ease-expo-out group-hover:scale-110"
+                  className={cn(
+                    "w-[48px] h-[72px] object-cover",
+                    "transition-transform duration-500 ease-expo-out",
+                    "group-hover:scale-110"
+                  )}
                   loading="lazy"
                 />
               ) : (
@@ -40,7 +53,11 @@ export function MovieCard({ movie, index = 0 }: MovieCardProps) {
 
             {/* Details */}
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-sm truncate text-gradient-animated">
+              {/* Title with gradient text */}
+              <h3 className={cn(
+                "font-semibold text-sm truncate",
+                "text-gradient-animated"
+              )}>
                 {movie.title}
               </h3>
               
@@ -49,20 +66,21 @@ export function MovieCard({ movie, index = 0 }: MovieCardProps) {
                 {movie.runtime && <span>• {movie.runtime} min</span>}
               </div>
 
-              {/* IMDb Rating */}
+              {/* IMDb Rating with glow */}
               {movie.imdb_rating && (
                 <div className="mt-2">
-                  <Badge variant="rating">
-                    ⭐ {movie.imdb_rating.toFixed(1)}
+                  <Badge variant="rating" className="gap-1">
+                    <span>⭐</span>
+                    <span>{movie.imdb_rating.toFixed(1)}</span>
                   </Badge>
                 </div>
               )}
 
-              {/* Genres */}
+              {/* Genres with neon badges */}
               {movie.genres && movie.genres.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2">
                   {movie.genres.slice(0, 2).map((genre) => (
-                    <Badge key={genre} variant="neonCyan" className="text-xs">
+                    <Badge key={genre} variant="genre" className="text-xs">
                       {genre}
                     </Badge>
                   ))}
@@ -76,7 +94,7 @@ export function MovieCard({ movie, index = 0 }: MovieCardProps) {
                 </div>
               )}
 
-              {/* Links */}
+              {/* Links with neon colors */}
               <div className="flex gap-3 mt-3">
                 {movie.imdb_id && (
                   <a
@@ -85,7 +103,8 @@ export function MovieCard({ movie, index = 0 }: MovieCardProps) {
                     rel="noopener noreferrer"
                     className={cn(
                       "text-neon-cyan hover:text-cyan-300 text-sm flex items-center gap-1",
-                      "transition-all duration-300 hover:text-glow-cyan"
+                      "transition-all duration-300",
+                      "hover:text-glow-cyan"
                     )}
                   >
                     IMDb
@@ -99,7 +118,8 @@ export function MovieCard({ movie, index = 0 }: MovieCardProps) {
                     rel="noopener noreferrer"
                     className={cn(
                       "text-neon-pink hover:text-pink-300 text-sm flex items-center gap-1",
-                      "transition-all duration-300 hover:text-glow-pink"
+                      "transition-all duration-300",
+                      "hover:text-glow-pink"
                     )}
                   >
                     Netflix

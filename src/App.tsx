@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { Movie, fetchMoviesByCountry } from '@/lib/supabase'
 import { DEFAULT_COUNTRY } from '@/lib/countries'
 import { CountrySelector } from '@/components/country-selector'
@@ -11,6 +11,7 @@ import { MobileSortSelector } from '@/components/mobile-sort-selector'
 import { useLocalStorage } from '@/hooks/use-local-storage'
 import { MovieFilters as Filters, initialFilters, applyFilters, getGenresFromMovies, getYearRange, getRuntimeRange, hasActiveFilters } from '@/lib/filter-utils'
 import { SortConfig, SortKey, SortDirection, defaultSort, sortMovies } from '@/lib/sort-utils'
+import { cn } from '@/lib/utils'
 
 const STORAGE_KEY = 'netflix-imdb-country'
 const FILTERS_STORAGE_KEY = 'netflix-imdb-filters'
@@ -26,6 +27,26 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useLocalStorage<Filters>(FILTERS_STORAGE_KEY, initialFilters)
   const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(SORT_STORAGE_KEY, defaultSort)
+  
+  // Ref for cursor glow effect
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Cursor glow effect (Active Theory inspired)
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = container.getBoundingClientRect()
+      const x = ((e.clientX - rect.left) / rect.width) * 100
+      const y = ((e.clientY - rect.top) / rect.height) * 100
+      container.style.setProperty('--mouse-x', `${x}%`)
+      container.style.setProperty('--mouse-y', `${y}%`)
+    }
+
+    container.addEventListener('mousemove', handleMouseMove)
+    return () => container.removeEventListener('mousemove', handleMouseMove)
+  }, [])
 
   // Persist country selection
   useEffect(() => {
@@ -70,31 +91,55 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background bg-y2k-mesh animate-mesh relative">
-      {/* Noise overlay for texture */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.02] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E')]" />
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated mesh gradient background */}
+      <div 
+        className={cn(
+          "fixed inset-0 bg-y2k-mesh animate-mesh opacity-50",
+          "pointer-events-none"
+        )}
+      />
       
-      <div className="max-w-[1200px] mx-auto px-4 py-6 md:px-6 relative">
-        {/* Header */}
-        <h1 className="text-3xl md:text-4xl font-display font-bold mb-6 text-gradient-animated">
+      {/* Noise texture overlay */}
+      <div className="fixed inset-0 noise-overlay pointer-events-none" />
+      
+      {/* Main content */}
+      <div 
+        ref={containerRef}
+        className={cn(
+          "relative max-w-[1200px] mx-auto px-4 py-6 md:px-6",
+          "cursor-glow"
+        )}
+      >
+        {/* Header with animated gradient */}
+        <h1 className={cn(
+          "text-3xl md:text-4xl font-bold mb-6",
+          "font-display text-gradient-animated"
+        )}>
           Netflix IMDb Movies
         </h1>
 
-        {/* Controls */}
-        <div className="flex flex-col gap-4 mb-4 md:flex-row md:items-center md:justify-between">
+        {/* Controls - glass container */}
+        <div className={cn(
+          "flex flex-col gap-4 mb-4 md:flex-row md:items-center md:justify-between",
+          "p-4 rounded-xl",
+          "glass-card"
+        )}>
           <SearchBar value={search} onChange={setSearch} />
           <CountrySelector value={country} onChange={setCountry} />
         </div>
 
         {/* Filters */}
         {!loading && movies.length > 0 && (
-          <MovieFilters
-            filters={filters}
-            onFiltersChange={setFilters}
-            availableGenres={availableGenres}
-            yearRange={yearRange}
-            runtimeRange={runtimeRange}
-          />
+          <div className="glass-card p-4 rounded-xl mb-4">
+            <MovieFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              availableGenres={availableGenres}
+              yearRange={yearRange}
+              runtimeRange={runtimeRange}
+            />
+          </div>
         )}
 
         {/* Content */}
@@ -114,10 +159,13 @@ function App() {
         ) : (
           <>
             {/* Movie count */}
-            <p className="text-sm text-muted-foreground mb-4 font-mono">
-              <span className="text-primary">{processedMovies.length}</span> movie{processedMovies.length !== 1 ? 's' : ''} found
+            <p className="text-sm text-muted-foreground mb-4">
+              <span className="font-mono text-primary">{processedMovies.length}</span>
+              {' '}movie{processedMovies.length !== 1 ? 's' : ''} found
               {hasActiveFilters(filters) && processedMovies.length < movies.length && (
-                <span className="text-muted-foreground/70"> (filtered from {movies.length})</span>
+                <span className="text-muted-foreground/70">
+                  {' '}(filtered from <span className="font-mono">{movies.length}</span>)
+                </span>
               )}
             </p>
 
@@ -156,8 +204,10 @@ interface EmptyStateProps {
 function EmptyState({ country, hasSearch, hasFilters }: EmptyStateProps) {
   if (hasSearch || hasFilters) {
     return (
-      <div className="text-center py-12 glass-card rounded-xl animate-fade-in">
-        <div className="text-6xl mb-4 animate-float">🔍</div>
+      <div className={cn(
+        "text-center py-12 rounded-xl",
+        "glass-card"
+      )}>
         <p className="text-muted-foreground text-lg">No movies match your search or filters.</p>
         <p className="text-sm text-muted-foreground mt-2">Try adjusting your filters or search term.</p>
       </div>
@@ -165,13 +215,15 @@ function EmptyState({ country, hasSearch, hasFilters }: EmptyStateProps) {
   }
 
   return (
-    <div className="text-center py-12 glass-card rounded-xl animate-fade-in">
-      <div className="text-6xl mb-4 animate-float">🎬</div>
+    <div className={cn(
+      "text-center py-12 rounded-xl",
+      "glass-card animate-float"
+    )}>
       <p className="text-muted-foreground mb-4 text-lg">
         No movies found for this country.
       </p>
       <p className="text-sm text-muted-foreground">
-        Run: <code className="bg-primary/20 text-primary px-2 py-1 rounded font-mono">npm run sync -- --country={country}</code>
+        Run: <code className="bg-muted/50 px-2 py-1 rounded font-mono text-primary">npm run sync -- --country={country}</code>
       </p>
     </div>
   )

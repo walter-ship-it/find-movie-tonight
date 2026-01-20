@@ -56,7 +56,7 @@ export function MovieFilters({
       {/* Filter Controls Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Year Range */}
-        <div className="space-y-2 glass-card p-4 rounded-lg">
+        <div className="space-y-2">
           <label className="text-sm font-medium text-cyan-300">Year Range</label>
           <Slider
             min={yearRange[0]}
@@ -78,7 +78,7 @@ export function MovieFilters({
         </div>
 
         {/* Runtime Range */}
-        <div className="space-y-2 glass-card p-4 rounded-lg">
+        <div className="space-y-2">
           <label className="text-sm font-medium text-cyan-300">Runtime (min)</label>
           <Slider
             min={runtimeRange[0]}
@@ -100,7 +100,7 @@ export function MovieFilters({
         </div>
 
         {/* Min Rating */}
-        <div className="space-y-2 glass-card p-4 rounded-lg">
+        <div className="space-y-2">
           <label className="text-sm font-medium text-cyan-300">Min IMDb Rating</label>
           <Slider
             min={0}
@@ -117,7 +117,7 @@ export function MovieFilters({
         </div>
 
         {/* Genre Multi-Select */}
-        <div className="space-y-2 glass-card p-4 rounded-lg">
+        <div className="space-y-2">
           <label className="text-sm font-medium text-cyan-300">Genres</label>
           <Popover>
             <PopoverTrigger asChild>
@@ -127,7 +127,11 @@ export function MovieFilters({
                   : 'All Genres'}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-3 glass-card border-white/20">
+            <PopoverContent className={cn(
+              "w-[200px] p-3",
+              "bg-card/90 backdrop-blur-xl border-white/10",
+              "shadow-glass-lg"
+            )}>
               <div className="space-y-2 max-h-[300px] overflow-y-auto">
                 {availableGenres.map(genre => (
                   <div key={genre} className="flex items-center space-x-2">
@@ -140,6 +144,7 @@ export function MovieFilters({
                           : filters.genres.filter(g => g !== genre)
                         updateFilter('genres', newGenres)
                       }}
+                      className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
                     <label
                       htmlFor={`genre-${genre}`}
@@ -199,7 +204,7 @@ export function MovieFilters({
             variant="ghost"
             size="sm"
             onClick={clearAllFilters}
-            className="h-6 text-xs text-pink-400 hover:text-pink-300 hover:bg-pink-500/10"
+            className="h-6 text-xs text-muted-foreground hover:text-primary"
           >
             Clear All
           </Button>
@@ -218,15 +223,15 @@ function FilterChip({ children, onRemove }: FilterChipProps) {
   return (
     <Badge 
       variant="neonPink" 
-      className={cn(
-        "gap-1 pl-2 pr-1 py-1",
-        "animate-fade-in"
-      )}
+      className="gap-1 pl-2 pr-1 py-1"
     >
-      <span className="text-xs font-mono">{children}</span>
+      <span className="text-xs">{children}</span>
       <button
         onClick={onRemove}
-        className="rounded-full hover:bg-white/20 p-0.5 transition-colors"
+        className={cn(
+          "rounded-full p-0.5 transition-all duration-300",
+          "hover:bg-white/20 hover:scale-110"
+        )}
         aria-label="Remove filter"
       >
         <X className="h-3 w-3" />

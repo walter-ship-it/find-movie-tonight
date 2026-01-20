@@ -1,10 +1,14 @@
 import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 
 export function LoadingSkeletonTable() {
   return (
-    <div className="space-y-4 glass-card rounded-lg p-4">
+    <div className={cn(
+      "space-y-4 p-4 rounded-xl",
+      "glass-card"
+    )}>
       {/* Header skeleton */}
-      <div className="flex gap-4 border-b border-primary/20 pb-4">
+      <div className="flex gap-4 border-b border-primary/10 pb-4">
         <Skeleton className="w-[60px] h-6" />
         <Skeleton className="flex-1 h-6" />
         <Skeleton className="w-[60px] h-6" />
@@ -17,7 +21,7 @@ export function LoadingSkeletonTable() {
       {Array.from({ length: 10 }).map((_, i) => (
         <div 
           key={i} 
-          className="flex gap-4 items-center animate-reveal"
+          className="flex gap-4 items-center animate-reveal-item"
           style={{ animationDelay: `${i * 50}ms` }}
         >
           <Skeleton className="w-[48px] h-[72px] rounded" />
@@ -42,7 +46,11 @@ export function LoadingSkeletonCards() {
       {Array.from({ length: 6 }).map((_, i) => (
         <div 
           key={i} 
-          className="glass-card rounded-lg p-4 animate-reveal"
+          className={cn(
+            "rounded-xl p-4",
+            "glass-card",
+            "animate-reveal-item"
+          )}
           style={{ animationDelay: `${i * 100}ms` }}
         >
           <div className="flex gap-4">
