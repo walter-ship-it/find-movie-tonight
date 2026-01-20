@@ -116,7 +116,7 @@ function App() {
           "text-3xl md:text-4xl font-bold mb-6",
           "font-display text-gradient-animated"
         )}>
-          Netflix IMDb Movies
+          Find Paulina a Movie
         </h1>
 
         {/* Controls - glass container */}
