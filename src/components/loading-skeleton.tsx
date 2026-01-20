@@ -2,9 +2,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export function LoadingSkeletonTable() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 glass-card rounded-lg p-4">
       {/* Header skeleton */}
-      <div className="flex gap-4 border-b pb-4">
+      <div className="flex gap-4 border-b border-primary/20 pb-4">
         <Skeleton className="w-[60px] h-6" />
         <Skeleton className="flex-1 h-6" />
         <Skeleton className="w-[60px] h-6" />
@@ -13,10 +13,14 @@ export function LoadingSkeletonTable() {
         <Skeleton className="w-[80px] h-6" />
         <Skeleton className="w-[100px] h-6" />
       </div>
-      {/* Row skeletons */}
+      {/* Row skeletons with staggered animation */}
       {Array.from({ length: 10 }).map((_, i) => (
-        <div key={i} className="flex gap-4 items-center">
-          <Skeleton className="w-[92px] h-[138px] rounded" />
+        <div 
+          key={i} 
+          className="flex gap-4 items-center animate-reveal"
+          style={{ animationDelay: `${i * 50}ms` }}
+        >
+          <Skeleton className="w-[48px] h-[72px] rounded" />
           <Skeleton className="flex-1 h-6" />
           <Skeleton className="w-[60px] h-6" />
           <Skeleton className="w-[80px] h-6" />
@@ -36,9 +40,13 @@ export function LoadingSkeletonCards() {
   return (
     <div className="space-y-4">
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="border rounded-lg p-4">
+        <div 
+          key={i} 
+          className="glass-card rounded-lg p-4 animate-reveal"
+          style={{ animationDelay: `${i * 100}ms` }}
+        >
           <div className="flex gap-4">
-            <Skeleton className="w-[92px] h-[138px] rounded flex-shrink-0" />
+            <Skeleton className="w-[48px] h-[72px] rounded flex-shrink-0" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-5 w-3/4" />
               <Skeleton className="h-4 w-1/2" />

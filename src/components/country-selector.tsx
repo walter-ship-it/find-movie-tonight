@@ -17,21 +17,29 @@ export function CountrySelector({ value, onChange }: CountrySelectorProps) {
 
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-[120px]">
+      <SelectTrigger className="w-[140px] glass-card border-white/20 hover:border-primary/50 transition-all duration-300">
         <SelectValue>
           {selectedCountry ? (
-            <span>
-              {selectedCountry.flag} {selectedCountry.code}
+            <span className="flex items-center gap-2">
+              <span className="text-lg">{selectedCountry.flag}</span>
+              <span className="font-mono text-primary">{selectedCountry.code}</span>
             </span>
           ) : (
             'Select'
           )}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="glass-card border-white/20">
         {countries.map((country) => (
-          <SelectItem key={country.code} value={country.code}>
-            {country.flag} {country.code}
+          <SelectItem 
+            key={country.code} 
+            value={country.code}
+            className="focus:bg-primary/20 focus:text-primary transition-colors"
+          >
+            <span className="flex items-center gap-2">
+              <span className="text-lg">{country.flag}</span>
+              <span className="font-mono">{country.code}</span>
+            </span>
           </SelectItem>
         ))}
       </SelectContent>

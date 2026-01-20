@@ -27,8 +27,8 @@ export function MobileSortSelector({ sortConfig, onSortChange }: MobileSortSelec
   const currentValue = `${sortConfig.key}-${sortConfig.direction}`
 
   return (
-    <div className="mb-4">
-      <label className="text-sm font-medium mb-2 block">Sort by</label>
+    <div className="mb-4 glass-card rounded-lg p-4">
+      <label className="text-sm font-medium mb-2 block text-cyan-300">Sort by</label>
       <Select
         value={currentValue}
         onValueChange={(value) => {
@@ -36,14 +36,15 @@ export function MobileSortSelector({ sortConfig, onSortChange }: MobileSortSelec
           onSortChange({ key: key as SortKey, direction: direction as SortDirection })
         }}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full bg-card/50 border-white/20 hover:border-primary/50 transition-all duration-300">
           <SelectValue placeholder="Sort by..." />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="glass-card border-white/20">
           {sortOptions.map(option => (
             <SelectItem
               key={`${option.key}-${option.direction}`}
               value={`${option.key}-${option.direction}`}
+              className="focus:bg-primary/20 focus:text-primary transition-colors"
             >
               {option.label}
             </SelectItem>

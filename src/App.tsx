@@ -70,10 +70,15 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-[1200px] mx-auto px-4 py-6 md:px-6">
+    <div className="min-h-screen bg-background bg-y2k-mesh animate-mesh relative">
+      {/* Noise overlay for texture */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.02] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E')]" />
+      
+      <div className="max-w-[1200px] mx-auto px-4 py-6 md:px-6 relative">
         {/* Header */}
-        <h1 className="text-3xl font-bold mb-6">Netflix IMDb Movies</h1>
+        <h1 className="text-3xl md:text-4xl font-display font-bold mb-6 text-gradient-animated">
+          Netflix IMDb Movies
+        </h1>
 
         {/* Controls */}
         <div className="flex flex-col gap-4 mb-4 md:flex-row md:items-center md:justify-between">
@@ -109,9 +114,11 @@ function App() {
         ) : (
           <>
             {/* Movie count */}
-            <p className="text-sm text-muted-foreground mb-4">
-              {processedMovies.length} movie{processedMovies.length !== 1 ? 's' : ''} found
-              {hasActiveFilters(filters) && processedMovies.length < movies.length && ` (filtered from ${movies.length})`}
+            <p className="text-sm text-muted-foreground mb-4 font-mono">
+              <span className="text-primary">{processedMovies.length}</span> movie{processedMovies.length !== 1 ? 's' : ''} found
+              {hasActiveFilters(filters) && processedMovies.length < movies.length && (
+                <span className="text-muted-foreground/70"> (filtered from {movies.length})</span>
+              )}
             </p>
 
             {/* Desktop table */}
@@ -129,8 +136,8 @@ function App() {
                 sortConfig={sortConfig}
                 onSortChange={setSortConfig}
               />
-              {processedMovies.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
+              {processedMovies.map((movie, index) => (
+                <MovieCard key={movie.id} movie={movie} index={index} />
               ))}
             </div>
           </>
@@ -149,20 +156,22 @@ interface EmptyStateProps {
 function EmptyState({ country, hasSearch, hasFilters }: EmptyStateProps) {
   if (hasSearch || hasFilters) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">No movies match your search or filters.</p>
+      <div className="text-center py-12 glass-card rounded-xl animate-fade-in">
+        <div className="text-6xl mb-4 animate-float">🔍</div>
+        <p className="text-muted-foreground text-lg">No movies match your search or filters.</p>
         <p className="text-sm text-muted-foreground mt-2">Try adjusting your filters or search term.</p>
       </div>
     )
   }
 
   return (
-    <div className="text-center py-12">
-      <p className="text-muted-foreground mb-4">
+    <div className="text-center py-12 glass-card rounded-xl animate-fade-in">
+      <div className="text-6xl mb-4 animate-float">🎬</div>
+      <p className="text-muted-foreground mb-4 text-lg">
         No movies found for this country.
       </p>
       <p className="text-sm text-muted-foreground">
-        Run: <code className="bg-muted px-2 py-1 rounded">npm run sync -- --country={country}</code>
+        Run: <code className="bg-primary/20 text-primary px-2 py-1 rounded font-mono">npm run sync -- --country={country}</code>
       </p>
     </div>
   )

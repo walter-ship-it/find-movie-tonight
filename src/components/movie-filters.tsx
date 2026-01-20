@@ -5,6 +5,7 @@ import { Slider } from '@/components/ui/slider'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Checkbox } from '@/components/ui/checkbox'
 import { MovieFilters as Filters, hasActiveFilters as checkActiveFilters } from '@/lib/filter-utils'
+import { cn } from '@/lib/utils'
 
 interface MovieFiltersProps {
   filters: Filters
@@ -55,8 +56,8 @@ export function MovieFilters({
       {/* Filter Controls Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Year Range */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Year Range</label>
+        <div className="space-y-2 glass-card p-4 rounded-lg">
+          <label className="text-sm font-medium text-cyan-300">Year Range</label>
           <Slider
             min={yearRange[0]}
             max={yearRange[1]}
@@ -71,14 +72,14 @@ export function MovieFilters({
               updateFilter('yearRange', [newMin, newMax])
             }}
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground font-mono">
             {filters.yearRange[0] ?? yearRange[0]} - {filters.yearRange[1] ?? yearRange[1]}
           </p>
         </div>
 
         {/* Runtime Range */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Runtime (min)</label>
+        <div className="space-y-2 glass-card p-4 rounded-lg">
+          <label className="text-sm font-medium text-cyan-300">Runtime (min)</label>
           <Slider
             min={runtimeRange[0]}
             max={runtimeRange[1]}
@@ -93,14 +94,14 @@ export function MovieFilters({
               updateFilter('runtimeRange', [newMin, newMax])
             }}
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground font-mono">
             {filters.runtimeRange[0] ?? runtimeRange[0]} - {filters.runtimeRange[1] ?? runtimeRange[1]} min
           </p>
         </div>
 
         {/* Min Rating */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Min IMDb Rating</label>
+        <div className="space-y-2 glass-card p-4 rounded-lg">
+          <label className="text-sm font-medium text-cyan-300">Min IMDb Rating</label>
           <Slider
             min={0}
             max={10}
@@ -110,23 +111,23 @@ export function MovieFilters({
               updateFilter('minRating', value > 0 ? value : null)
             }}
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground font-mono">
             {filters.minRating ? `≥ ${filters.minRating.toFixed(1)}` : 'All Ratings'}
           </p>
         </div>
 
         {/* Genre Multi-Select */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Genres</label>
+        <div className="space-y-2 glass-card p-4 rounded-lg">
+          <label className="text-sm font-medium text-cyan-300">Genres</label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="w-full justify-start">
+              <Button variant="glass" className="w-full justify-start">
                 {filters.genres.length > 0
                   ? `${filters.genres.length} selected`
                   : 'All Genres'}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-3">
+            <PopoverContent className="w-[200px] p-3 glass-card border-white/20">
               <div className="space-y-2 max-h-[300px] overflow-y-auto">
                 {availableGenres.map(genre => (
                   <div key={genre} className="flex items-center space-x-2">
@@ -142,7 +143,7 @@ export function MovieFilters({
                     />
                     <label
                       htmlFor={`genre-${genre}`}
-                      className="text-sm cursor-pointer flex-1"
+                      className="text-sm cursor-pointer flex-1 hover:text-primary transition-colors"
                     >
                       {genre}
                     </label>
@@ -198,7 +199,7 @@ export function MovieFilters({
             variant="ghost"
             size="sm"
             onClick={clearAllFilters}
-            className="h-6 text-xs"
+            className="h-6 text-xs text-pink-400 hover:text-pink-300 hover:bg-pink-500/10"
           >
             Clear All
           </Button>
@@ -215,11 +216,17 @@ interface FilterChipProps {
 
 function FilterChip({ children, onRemove }: FilterChipProps) {
   return (
-    <Badge variant="secondary" className="gap-1 pl-2 pr-1 py-1">
-      <span className="text-xs">{children}</span>
+    <Badge 
+      variant="neonPink" 
+      className={cn(
+        "gap-1 pl-2 pr-1 py-1",
+        "animate-fade-in"
+      )}
+    >
+      <span className="text-xs font-mono">{children}</span>
       <button
         onClick={onRemove}
-        className="rounded-full hover:bg-muted-foreground/20 p-0.5 transition-colors"
+        className="rounded-full hover:bg-white/20 p-0.5 transition-colors"
         aria-label="Remove filter"
       >
         <X className="h-3 w-3" />
