@@ -27,6 +27,7 @@ export function MovieTable({ movies, sortConfig, onSortChange }: MovieTableProps
           <SortableTableHead sortKey="title" currentSort={sortConfig} onSortChange={onSortChange}>
             Title
           </SortableTableHead>
+          <TableHead>Description</TableHead>
           <SortableTableHead sortKey="year" currentSort={sortConfig} onSortChange={onSortChange} className="w-[60px]">
             Year
           </SortableTableHead>
@@ -58,6 +59,11 @@ export function MovieTable({ movies, sortConfig, onSortChange }: MovieTableProps
               )}
             </TableCell>
             <TableCell className="font-medium p-2">{movie.title}</TableCell>
+            <TableCell className="p-2">
+              <div className="text-xs text-muted-foreground leading-tight line-clamp-3">
+                {movie.overview || '—'}
+              </div>
+            </TableCell>
             <TableCell className="text-muted-foreground p-2">{movie.year || '—'}</TableCell>
             <TableCell className="text-muted-foreground p-2">
               {movie.runtime ? `${movie.runtime} min` : '—'}

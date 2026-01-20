@@ -57,6 +57,13 @@ export function MovieCard({ movie }: MovieCardProps) {
               </div>
             )}
 
+            {/* Description */}
+            {movie.overview && (
+              <div className="mt-2 text-xs text-muted-foreground leading-tight line-clamp-3">
+                {movie.overview}
+              </div>
+            )}
+
             {/* Links */}
             <div className="flex gap-3 mt-3">
               {movie.imdb_id && (
