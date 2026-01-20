@@ -9,22 +9,34 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { SortableTableHead } from '@/components/sortable-table-head'
+import { SortConfig, SortKey } from '@/lib/sort-utils'
 
 interface MovieTableProps {
   movies: Movie[]
+  sortConfig: SortConfig
+  onSortChange: (key: SortKey) => void
 }
 
-export function MovieTable({ movies }: MovieTableProps) {
+export function MovieTable({ movies, sortConfig, onSortChange }: MovieTableProps) {
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[48px]">Poster</TableHead>
-          <TableHead>Title</TableHead>
-          <TableHead className="w-[60px]">Year</TableHead>
-          <TableHead className="w-[80px]">Runtime</TableHead>
+          <SortableTableHead sortKey="title" currentSort={sortConfig} onSortChange={onSortChange}>
+            Title
+          </SortableTableHead>
+          <SortableTableHead sortKey="year" currentSort={sortConfig} onSortChange={onSortChange} className="w-[60px]">
+            Year
+          </SortableTableHead>
+          <SortableTableHead sortKey="runtime" currentSort={sortConfig} onSortChange={onSortChange} className="w-[80px]">
+            Runtime
+          </SortableTableHead>
           <TableHead>Genres</TableHead>
-          <TableHead className="w-[100px]">IMDb</TableHead>
+          <SortableTableHead sortKey="imdb_rating" currentSort={sortConfig} onSortChange={onSortChange} className="w-[100px]">
+            IMDb
+          </SortableTableHead>
           <TableHead className="w-[100px]">Links</TableHead>
         </TableRow>
       </TableHeader>
