@@ -29,6 +29,7 @@ export function SortableTableHead({
       <button
         onClick={handleClick}
         className="flex items-center gap-1 hover:text-foreground transition-colors"
+        aria-label={`Sort by ${children}${isActive ? `, currently sorted ${direction === 'asc' ? 'ascending' : 'descending'}` : ''}`}
       >
         {children}
         {isActive ? (

@@ -86,10 +86,15 @@
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Better touch handling for mobile */
+  a, button, [role="button"], input, select, textarea {
+    touch-action: manipulation;
   }
   
   /* Y2K Scrollbar Styling */

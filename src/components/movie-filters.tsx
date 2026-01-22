@@ -57,8 +57,9 @@ export function MovieFilters({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Year Range */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-cyan-300">Year Range</label>
+          <label id="year-range-label" className="text-sm font-medium text-cyan-300">Year Range</label>
           <Slider
+            aria-labelledby="year-range-label"
             min={yearRange[0]}
             max={yearRange[1]}
             step={1}
@@ -79,8 +80,9 @@ export function MovieFilters({
 
         {/* Runtime Range */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-cyan-300">Runtime (min)</label>
+          <label id="runtime-range-label" className="text-sm font-medium text-cyan-300">Runtime (min)</label>
           <Slider
+            aria-labelledby="runtime-range-label"
             min={runtimeRange[0]}
             max={runtimeRange[1]}
             step={1}
@@ -101,8 +103,9 @@ export function MovieFilters({
 
         {/* Min Rating */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-cyan-300">Min IMDb Rating</label>
+          <label id="min-rating-label" className="text-sm font-medium text-cyan-300">Min IMDb Rating</label>
           <Slider
+            aria-labelledby="min-rating-label"
             min={0}
             max={10}
             step={0.1}
@@ -118,10 +121,10 @@ export function MovieFilters({
 
         {/* Genre Multi-Select */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-cyan-300">Genres</label>
+          <label id="genres-label" className="text-sm font-medium text-cyan-300">Genres</label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="glass" className="w-full justify-start">
+              <Button variant="glass" className="w-full justify-start" aria-labelledby="genres-label">
                 {filters.genres.length > 0
                   ? `${filters.genres.length} selected`
                   : 'All Genres'}

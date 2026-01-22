@@ -27,8 +27,11 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
           "group-focus-within:text-primary"
         )} />
         <Input
-          type="text"
-          placeholder="Search movies..."
+          type="search"
+          name="search"
+          autoComplete="off"
+          placeholder="Search movies…"
+          aria-label="Search movies"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={cn(

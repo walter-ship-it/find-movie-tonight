@@ -57,6 +57,8 @@ export function MovieTable({ movies, sortConfig, onSortChange }: MovieTableProps
                     <img
                       src={movie.poster_url}
                       alt={`${movie.title} poster`}
+                      width={48}
+                      height={72}
                       className={cn(
                         "w-[48px] h-[72px] object-cover",
                         "transition-transform duration-500 ease-expo-out",
