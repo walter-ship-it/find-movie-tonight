@@ -21,7 +21,7 @@ interface MovieTableProps {
 
 export function MovieTable({ movies, sortConfig, onSortChange }: MovieTableProps) {
   return (
-    <div className="glass-card rounded-lg overflow-hidden holo-card">
+    <div className="glass-card rounded-lg overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
@@ -45,12 +45,10 @@ export function MovieTable({ movies, sortConfig, onSortChange }: MovieTableProps
         </TableHeader>
         <TableBody className="animate-reveal-stagger">
           {movies.map((movie, index) => (
-            <TableRow
+            <TableRow 
               key={movie.id}
               className={cn(
-                index % 2 === 0 ? "bg-card/30" : "bg-card/10",
-                "transition-all duration-300 ease-expo-out",
-                "hover:bg-primary/10 hover:shadow-[inset_0_0_30px_rgba(255,110,199,0.1)]"
+                index % 2 === 0 ? "bg-card/30" : "bg-card/10"
               )}
             >
               <TableCell className="p-2">
@@ -76,7 +74,7 @@ export function MovieTable({ movies, sortConfig, onSortChange }: MovieTableProps
                 )}
               </TableCell>
               <TableCell className="font-medium p-2">
-                <span className="text-gradient glitch" data-text={movie.title}>{movie.title}</span>
+                <span className="text-gradient">{movie.title}</span>
               </TableCell>
               <TableCell className="p-2">
                 <div className="text-xs text-muted-foreground leading-tight line-clamp-3">

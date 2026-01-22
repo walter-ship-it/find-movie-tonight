@@ -8,7 +8,6 @@ import { MovieCard } from '@/components/movie-card'
 import { LoadingSkeletonTable, LoadingSkeletonCards } from '@/components/loading-skeleton'
 import { MovieFilters } from '@/components/movie-filters'
 import { MobileSortSelector } from '@/components/mobile-sort-selector'
-import { FuturisticCursor } from '@/components/futuristic-cursor'
 import { useLocalStorage } from '@/hooks/use-local-storage'
 import { MovieFilters as Filters, initialFilters, applyFilters, getGenresFromMovies, getYearRange, getRuntimeRange, hasActiveFilters } from '@/lib/filter-utils'
 import { SortConfig, SortKey, SortDirection, defaultSort, sortMovies } from '@/lib/sort-utils'
@@ -92,18 +91,15 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden scan-lines">
-      {/* Futuristic custom cursor */}
-      <FuturisticCursor />
-
+    <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Animated mesh gradient background */}
-      <div
+      <div 
         className={cn(
           "fixed inset-0 bg-y2k-mesh animate-mesh opacity-50",
           "pointer-events-none"
         )}
       />
-
+      
       {/* Noise texture overlay */}
       <div className="fixed inset-0 noise-overlay pointer-events-none" />
       
@@ -115,14 +111,11 @@ function App() {
           "cursor-glow"
         )}
       >
-        {/* Header with animated gradient and glitch effect */}
-        <h1
-          className={cn(
-            "text-3xl md:text-4xl font-bold mb-6",
-            "font-display text-gradient-animated glitch"
-          )}
-          data-text="Find Paulina a Movie"
-        >
+        {/* Header with animated gradient */}
+        <h1 className={cn(
+          "text-3xl md:text-4xl font-bold mb-6",
+          "font-display text-gradient-animated"
+        )}>
           Find Paulina a Movie
         </h1>
 

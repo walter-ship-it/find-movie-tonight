@@ -3,7 +3,12 @@ UI Rules (Strict — for AI)
 When generating frontend code:
 
 1. ALWAYS follow frontend-guidelines.md exactly
-
+2. Do NOT invent new components beyond what's listed
+3. Do NOT change layout structure unless explicitly instructed
+4. Prefer simplicity over "cool factor"
+5. If unsure between two approaches, choose the simpler one
+6. Do NOT add animations, transitions, or effects
+7. Every UI decision must have a functional purpose
 
 Mobile responsiveness:
 - Test both mobile and desktop layouts

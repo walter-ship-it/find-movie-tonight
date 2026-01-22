@@ -11,35 +11,24 @@ interface MovieCardProps {
 
 export function MovieCard({ movie, index = 0 }: MovieCardProps) {
   return (
-    <div
-      className="group relative magnetic"
-      style={{
+    <div 
+      className="group relative"
+      style={{ 
         animationDelay: `${index * 50}ms`,
       }}
     >
       {/* Glow effect on hover - Active Theory inspired */}
-      <div
+      <div 
         className={cn(
           "absolute -inset-1 rounded-xl blur-lg opacity-0",
           "bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-600",
-          "transition-all duration-500 ease-expo-out",
-          "group-hover:opacity-70 group-hover:blur-xl"
-        )}
+          "transition-opacity duration-500 ease-expo-out",
+          "group-hover:opacity-60"
+        )} 
       />
-
-      {/* Energy pulse effect */}
-      <div
-        className={cn(
-          "absolute -inset-0.5 rounded-xl opacity-0",
-          "bg-gradient-to-r from-primary via-secondary to-accent",
-          "transition-opacity duration-300",
-          "group-hover:opacity-100 group-hover:animate-pulse"
-        )}
-        style={{ padding: '1px' }}
-      />
-
+      
       {/* Card content */}
-      <Card variant="movie" className="relative holo-card energy-pulse">
+      <Card variant="movie" className="relative">
         <CardContent className="p-3">
           <div className="flex gap-3">
             {/* Poster */}
@@ -66,14 +55,11 @@ export function MovieCard({ movie, index = 0 }: MovieCardProps) {
 
             {/* Details */}
             <div className="flex-1 min-w-0">
-              {/* Title with gradient text and glitch effect */}
-              <h3
-                className={cn(
-                  "font-semibold text-sm truncate",
-                  "text-gradient-animated glitch"
-                )}
-                data-text={movie.title}
-              >
+              {/* Title with gradient text */}
+              <h3 className={cn(
+                "font-semibold text-sm truncate",
+                "text-gradient-animated"
+              )}>
                 {movie.title}
               </h3>
               
