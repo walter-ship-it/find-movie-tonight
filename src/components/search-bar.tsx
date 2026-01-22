@@ -9,15 +9,14 @@ interface SearchBarProps {
 
 export function SearchBar({ value, onChange }: SearchBarProps) {
   return (
-    <div className="relative group magnetic">
+    <div className="relative group">
       {/* Glow effect behind input */}
-      <div
+      <div 
         className={cn(
           "absolute -inset-1 rounded-lg blur-md opacity-0",
-          "bg-gradient-to-r from-pink-600/50 via-purple-600/50 to-cyan-600/50",
-          "transition-all duration-500 ease-expo-out",
-          "group-focus-within:opacity-70 group-focus-within:blur-lg",
-          "group-hover:opacity-30"
+          "bg-gradient-to-r from-pink-600/50 to-cyan-600/50",
+          "transition-opacity duration-500 ease-expo-out",
+          "group-focus-within:opacity-50"
         )}
       />
       

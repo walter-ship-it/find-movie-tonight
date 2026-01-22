@@ -141,21 +141,11 @@
   /* Glass card effect */
   .glass-card {
     @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-glass;
-    @apply transition-all duration-500 ease-expo-out;
   }
-
-  .glass-card:hover {
-    @apply bg-white/10 border-white/20 shadow-glass-lg;
-  }
-
+  
   /* Strong glass effect */
   .glass-strong {
     @apply bg-white/10 backdrop-blur-2xl border border-white/20 shadow-glass-lg;
-    @apply transition-all duration-500 ease-expo-out;
-  }
-
-  .glass-strong:hover {
-    @apply bg-white/20 border-white/30;
   }
   
   /* Neon border glow */
@@ -198,209 +188,29 @@
     text-shadow: 0 0 5px #B967FF, 0 0 10px #B967FF, 0 0 20px #B967FF;
   }
   
-  /* Hide default cursor on desktop */
-  @media (min-width: 768px) and (hover: hover) {
-    * {
-      cursor: none !important;
-    }
-  }
-
   /* Cursor-following glow effect (Active Theory inspired) */
   .cursor-glow {
     position: relative;
   }
-
+  
   .cursor-glow::before {
     content: '';
     position: absolute;
     inset: 0;
-    background:
-      radial-gradient(
-        800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-        hsl(var(--primary) / 0.15) 0%,
-        hsl(var(--secondary) / 0.05) 25%,
-        transparent 50%
-      );
+    background: radial-gradient(
+      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      hsl(var(--primary) / 0.1) 0%,
+      transparent 40%
+    );
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.8s var(--ease-expo-out);
+    transition: opacity 0.5s var(--ease-expo-out);
     border-radius: inherit;
     z-index: 0;
   }
-
+  
   .cursor-glow:hover::before {
     opacity: 1;
-  }
-
-  /* Scan lines overlay */
-  .scan-lines {
-    position: relative;
-  }
-
-  .scan-lines::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.03) 2px,
-      rgba(0, 0, 0, 0.03) 4px
-    );
-    pointer-events: none;
-    z-index: 9998;
-  }
-
-  /* CRT flicker effect */
-  .crt-flicker {
-    animation: crt-flicker 0.15s infinite;
-  }
-
-  /* Glitch text effect */
-  .glitch {
-    position: relative;
-  }
-
-  .glitch::before,
-  .glitch::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-  }
-
-  .glitch:hover::before {
-    animation: glitch-1 0.3s infinite linear alternate-reverse;
-    color: hsl(var(--secondary));
-    opacity: 0.8;
-    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-  }
-
-  .glitch:hover::after {
-    animation: glitch-2 0.3s infinite linear alternate-reverse;
-    color: hsl(var(--primary));
-    opacity: 0.8;
-    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
-  }
-
-  /* Holographic card effect */
-  .holo-card {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .holo-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      105deg,
-      transparent 40%,
-      hsl(var(--primary) / 0.1) 45%,
-      hsl(var(--secondary) / 0.15) 50%,
-      hsl(var(--accent) / 0.1) 55%,
-      transparent 60%
-    );
-    background-size: 250% 250%;
-    background-position: 0% 0%;
-    transition: background-position 0.8s var(--ease-expo-out);
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .holo-card:hover::before {
-    background-position: 100% 100%;
-  }
-
-  /* Plasma border effect */
-  .plasma-border {
-    position: relative;
-    isolation: isolate;
-  }
-
-  .plasma-border::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: conic-gradient(
-      from var(--plasma-angle, 0deg),
-      hsl(var(--primary)),
-      hsl(var(--secondary)),
-      hsl(var(--accent)),
-      hsl(var(--primary))
-    );
-    border-radius: inherit;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.5s var(--ease-expo-out);
-    animation: plasma-rotate 3s linear infinite;
-  }
-
-  .plasma-border::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: hsl(var(--background));
-    border-radius: inherit;
-    z-index: -1;
-  }
-
-  .plasma-border:hover::before {
-    opacity: 1;
-  }
-
-  /* Magnetic hover effect */
-  .magnetic {
-    transition: transform 0.3s var(--ease-expo-out);
-  }
-
-  /* Data stream effect */
-  .data-stream {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .data-stream::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      hsl(var(--secondary) / 0.2),
-      transparent
-    );
-    animation: data-flow 2s infinite;
-  }
-
-  /* Energy pulse ring */
-  .energy-pulse {
-    position: relative;
-  }
-
-  .energy-pulse::after {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: inherit;
-    border: 1px solid hsl(var(--primary) / 0.5);
-    opacity: 0;
-  }
-
-  .energy-pulse:hover::after {
-    animation: energy-ring 1s ease-out forwards;
-  }
-
-  /* Spinning slow for cursor ring */
-  .animate-spin-slow {
-    animation: spin 8s linear infinite;
   }
   
   /* Staggered reveal animation */
@@ -465,68 +275,6 @@
 /* Mesh background animation */
 .animate-mesh {
   animation: mesh-move 20s ease infinite;
-}
-
-/* Glitch keyframes */
-@keyframes glitch-1 {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
-}
-
-@keyframes glitch-2 {
-  0% { transform: translate(0); }
-  20% { transform: translate(2px, -2px); }
-  40% { transform: translate(2px, 2px); }
-  60% { transform: translate(-2px, -2px); }
-  80% { transform: translate(-2px, 2px); }
-  100% { transform: translate(0); }
-}
-
-/* Plasma rotation */
-@keyframes plasma-rotate {
-  from { --plasma-angle: 0deg; }
-  to { --plasma-angle: 360deg; }
-}
-
-@property --plasma-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
-/* Data flow */
-@keyframes data-flow {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
-
-/* Energy ring pulse */
-@keyframes energy-ring {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.5);
-  }
-}
-
-/* CRT flicker */
-@keyframes crt-flicker {
-  0% { opacity: 0.97; }
-  50% { opacity: 1; }
-  100% { opacity: 0.98; }
-}
-
-/* Shimmer */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
 }
 
 /* Reduced motion preferences */
