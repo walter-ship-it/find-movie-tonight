@@ -29,10 +29,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User session persists across browser refresh and tab close/reopen
   4. User can link their account to their partner's account
   5. Anonymous browsing still works (existing functionality preserved)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD during phase planning
+- [ ] 01-01-PLAN.md -- Database foundation (RLS + profiles) and AuthContext provider
+- [ ] 01-02-PLAN.md -- Auth UI forms (sign up, sign in, magic link, user menu)
+- [ ] 01-03-PLAN.md -- Partner linking UI and end-to-end verification
 
 ### Phase 2: Personal Shortlists
 **Goal**: Each user can build and manage their own movie shortlist
@@ -79,17 +81,17 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 Note: Phase 4 can be developed in parallel with Phases 2-3 as it has no dependency on shortlist features.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Authentication Foundation | 0/TBD | Not started | - |
+| 1. Authentication Foundation | 0/3 | Planning complete | - |
 | 2. Personal Shortlists | 0/TBD | Not started | - |
 | 3. Shared Shortlists | 0/TBD | Not started | - |
 | 4. Platform Selection & Sync | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-10*
-*Last updated: 2026-02-10*
+*Last updated: 2026-02-11*
