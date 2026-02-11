@@ -128,9 +128,12 @@ export function PartnerLink() {
   }
 
   if (state.status === 'error') {
+    const isSchemaCache = state.message.includes('schema cache')
     return (
       <div className="text-xs text-destructive">
-        {state.message}
+        {isSchemaCache
+          ? 'Profiles table not found — reload schema cache in Supabase Dashboard (Settings > API)'
+          : state.message}
       </div>
     )
   }
