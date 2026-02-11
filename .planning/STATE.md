@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-10)
 ## Current Position
 
 Phase: 1 of 4 (Authentication Foundation)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: Executing
-Last activity: 2026-02-11 — Completed 01-01: Auth foundation (RLS, profiles, AuthContext)
+Last activity: 2026-02-11 — Completed 01-02: Auth UI forms (signup, login, magic link, user menu)
 
-Progress: [█░░░░░░░░░] 10%
+Progress: [██░░░░░░░░] 20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
+- Total plans completed: 2
 - Average duration: 2 min
-- Total execution time: 0.03 hours
+- Total execution time: 0.07 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-authentication-foundation | 1/3 | 2 min | 2 min |
+| 01-authentication-foundation | 2/3 | 4 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min)
-- Trend: Starting
+- Last 5 plans: 01-01 (2 min), 01-02 (2 min)
+- Trend: Consistent
 
 *Updated after each plan completion*
 
@@ -47,6 +47,9 @@ Recent decisions affecting current work:
 - Scheduled auto-sync — "Must be current" requirement — can't rely on manual runs
 - Migrations not pushed via CLI — Supabase project not linked locally; apply via SQL Editor dashboard
 - No new auth packages — existing @supabase/supabase-js handles all auth; deprecated packages avoided
+- Custom auth forms over @supabase/auth-ui-react — unmaintained package; built custom forms matching app aesthetic
+- Auth modal overlay in App.tsx — keeps SPA simple; no separate /login route needed
+- Magic link redirects to app root — AuthCallback mounted globally processes token_hash on any page load
 
 ### Pending Todos
 
@@ -62,9 +65,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: Completed 01-01-PLAN.md (auth foundation). Next: 01-02 (auth UI forms)
+Stopped at: Completed 01-02-PLAN.md (auth UI forms). Next: 01-03 (partner linking UI)
 Resume file: None
 
 ---
 *State initialized: 2026-02-10*
-*Last updated: 2026-02-11*
+*Last updated: 2026-02-11T13:48Z*
