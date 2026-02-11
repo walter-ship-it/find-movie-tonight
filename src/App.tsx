@@ -9,9 +9,15 @@ import { LoadingSkeletonTable, LoadingSkeletonCards } from '@/components/loading
 import { MovieFilters } from '@/components/movie-filters'
 import { MobileSortSelector } from '@/components/mobile-sort-selector'
 import { useLocalStorage } from '@/hooks/use-local-storage'
-import { MovieFilters as Filters, initialFilters, applyFilters, getGenresFromMovies, getYearRange, getRuntimeRange, hasActiveFilters } from '@/lib/filter-utils'
+import { MovieFilters as Filters, initialFilters, applyFilters, getGenresFromMovies, getStreamingProvidersFromMovies, getYearRange, getRuntimeRange, hasActiveFilters } from '@/lib/filter-utils'
 import { SortConfig, SortKey, SortDirection, defaultSort, sortMovies } from '@/lib/sort-utils'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/auth-context'
+import { AuthCallback } from '@/components/auth/auth-callback'
+import { UserMenu } from '@/components/auth/user-menu'
+import { LoginForm } from '@/components/auth/login-form'
+import { SignUpForm } from '@/components/auth/signup-form'
+import { Button } from '@/components/ui/button'
 
 const STORAGE_KEY = 'netflix-imdb-country'
 const FILTERS_STORAGE_KEY = 'netflix-imdb-filters'
@@ -27,9 +33,19 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useLocalStorage<Filters>(FILTERS_STORAGE_KEY, initialFilters)
   const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(SORT_STORAGE_KEY, defaultSort)
-  
+  const [showAuth, setShowAuth] = useState<'login' | 'signup' | null>(null)
+
+  const { user, loading: authLoading } = useAuth()
+
   // Ref for cursor glow effect
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // Auto-close auth modal when user signs in
+  useEffect(() => {
+    if (user && showAuth) {
+      setShowAuth(null)
+    }
+  }, [user, showAuth])
 
   // Cursor glow effect (Active Theory inspired)
   useEffect(() => {
@@ -63,6 +79,7 @@ function App() {
 
   // Derived data for filters
   const availableGenres = useMemo(() => getGenresFromMovies(movies), [movies])
+  const availableProviders = useMemo(() => getStreamingProvidersFromMovies(movies), [movies])
   const yearRange = useMemo(() => getYearRange(movies), [movies])
   const runtimeRange = useMemo(() => getRuntimeRange(movies), [movies])
 
@@ -92,19 +109,59 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Magic link callback handler */}
+      <AuthCallback />
+
       {/* Animated mesh gradient background */}
-      <div 
+      <div
         className={cn(
           "fixed inset-0 bg-y2k-mesh animate-mesh opacity-50",
           "pointer-events-none"
         )}
       />
-      
+
       {/* Noise texture overlay */}
       <div className="fixed inset-0 noise-overlay pointer-events-none" />
-      
+
+      {/* Auth modal overlay */}
+      {showAuth && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowAuth(null)
+          }}
+        >
+          <div className="glass-card rounded-xl p-6 w-full max-w-sm mx-4 relative">
+            <button
+              onClick={() => setShowAuth(null)}
+              className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Close"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <h2 className="text-lg font-semibold text-foreground mb-4">
+              {showAuth === 'login' ? 'Sign in' : 'Create account'}
+            </h2>
+            {showAuth === 'login' ? (
+              <LoginForm
+                onToggle={() => setShowAuth('signup')}
+                onSuccess={() => setShowAuth(null)}
+              />
+            ) : (
+              <SignUpForm
+                onToggle={() => setShowAuth('login')}
+                onSuccess={() => setShowAuth(null)}
+              />
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Main content */}
-      <div 
+      <div
         ref={containerRef}
         className={cn(
           "relative max-w-[1200px] mx-auto px-4 py-6 md:px-6",
@@ -112,12 +169,27 @@ function App() {
         )}
       >
         {/* Header with animated gradient */}
-        <h1 className={cn(
-          "text-3xl md:text-4xl font-bold mb-6",
-          "font-display text-gradient-animated"
-        )}>
-          Find Paulina a Movie
-        </h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className={cn(
+            "text-3xl md:text-4xl font-bold",
+            "font-display text-gradient-animated"
+          )}>
+            Find Paulina a Movie
+          </h1>
+          <div className="flex-shrink-0">
+            {authLoading ? null : user ? (
+              <UserMenu />
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowAuth('login')}
+              >
+                Sign in
+              </Button>
+            )}
+          </div>
+        </div>
 
         {/* Controls - glass container */}
         <div className={cn(
@@ -136,6 +208,7 @@ function App() {
               filters={filters}
               onFiltersChange={setFilters}
               availableGenres={availableGenres}
+              availableProviders={availableProviders}
               yearRange={yearRange}
               runtimeRange={runtimeRange}
             />
