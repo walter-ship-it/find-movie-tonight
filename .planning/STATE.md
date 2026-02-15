@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Eliminate the "what should we watch?" debate — open the app, see what's available across your subscriptions, shortlist your picks, and land on a movie in under 5 minutes.
-**Current focus:** Phase 1 - Authentication Foundation
+**Current focus:** Phase 1 complete. Ready for Phase 2 - Personal Shortlists
 
 ## Current Position
 
-Phase: 1 of 4 (Authentication Foundation)
-Plan: 3 of 3 in current phase (Task 1 complete; Task 2 human verification pending)
-Status: Checkpoint - awaiting human verification
-Last activity: 2026-02-11 — Completed 01-03 Task 1: Partner linking component. Task 2 (end-to-end verification) pending.
+Phase: 1 of 4 COMPLETE (Authentication Foundation)
+Plan: All 3 plans complete + verified
+Status: Phase 1 verified and complete
+Last activity: 2026-02-15 — Phase 1 verified (5/5 success criteria passed). Partner linking evolved to invite code system.
 
 Progress: [███░░░░░░░] 25%
 
@@ -65,10 +65,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-11
-Stopped at: Completed 01-03 Task 1 (partner linking component). Task 2 is human verification checkpoint for complete end-to-end auth flow. Dev server running at http://localhost:5173.
+Last session: 2026-02-15
+Stopped at: Phase 1 complete and verified. Ready for Phase 2 planning.
 Resume file: None
 
 ---
 *State initialized: 2026-02-10*
-*Last updated: 2026-02-11T14:26Z*
+*Last updated: 2026-02-15T18:30Z*

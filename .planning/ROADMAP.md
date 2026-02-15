@@ -12,7 +12,7 @@ This roadmap takes an existing movie browsing app and transforms it into a colla
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Authentication Foundation** - User accounts with session persistence
+- [x] **Phase 1: Authentication Foundation** - User accounts with session persistence
 - [ ] **Phase 2: Personal Shortlists** - Individual movie lists with watch tracking
 - [ ] **Phase 3: Shared Shortlists** - Real-time collaboration between partners
 - [ ] **Phase 4: Platform Selection & Sync** - Per-user streaming platforms and automated catalog updates
@@ -32,9 +32,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Database foundation (RLS + profiles) and AuthContext provider
-- [ ] 01-02-PLAN.md -- Auth UI forms (sign up, sign in, magic link, user menu)
-- [ ] 01-03-PLAN.md -- Partner linking UI and end-to-end verification
+- [x] 01-01-PLAN.md -- Database foundation (RLS + profiles) and AuthContext provider
+- [x] 01-02-PLAN.md -- Auth UI forms (sign up, sign in, magic link, user menu)
+- [x] 01-03-PLAN.md -- Partner linking UI and end-to-end verification
 
 ### Phase 2: Personal Shortlists
 **Goal**: Each user can build and manage their own movie shortlist
@@ -87,11 +87,11 @@ Note: Phase 4 can be developed in parallel with Phases 2-3 as it has no dependen
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Authentication Foundation | 0/3 | Planning complete | - |
+| 1. Authentication Foundation | 3/3 | ✓ Complete | 2026-02-15 |
 | 2. Personal Shortlists | 0/TBD | Not started | - |
 | 3. Shared Shortlists | 0/TBD | Not started | - |
 | 4. Platform Selection & Sync | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-10*
-*Last updated: 2026-02-11*
+*Last updated: 2026-02-15*
