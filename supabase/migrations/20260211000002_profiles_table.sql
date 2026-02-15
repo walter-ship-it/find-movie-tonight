@@ -32,16 +32,21 @@ create policy "Users can view own profile"
   to authenticated
   using ((select auth.uid()) = id);
 
--- Users can view their partner's profile
+-- Helper function to get current user's partner_id without triggering RLS recursion
+create or replace function public.get_my_partner_id()
+returns uuid
+language sql
+security definer set search_path = ''
+stable
+as $$
+  select partner_id from public.profiles where id = auth.uid();
+$$;
+
+-- Users can view their partner's profile (uses helper to avoid RLS recursion)
 create policy "Users can view partner profile"
   on public.profiles for select
   to authenticated
-  using (
-    id = (
-      select partner_id from public.profiles
-      where id = (select auth.uid())
-    )
-  );
+  using (id = public.get_my_partner_id());
 
 -- Users can update their own profile
 create policy "Users can update own profile"
