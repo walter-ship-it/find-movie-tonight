@@ -7,7 +7,13 @@ export function useLocalStorage<T>(
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
       const item = localStorage.getItem(key)
-      return item ? JSON.parse(item) : initialValue
+      if (!item) return initialValue
+      const parsed = JSON.parse(item)
+      // Merge with initialValue so new fields get defaults
+      if (typeof initialValue === 'object' && initialValue !== null && !Array.isArray(initialValue)) {
+        return { ...initialValue, ...parsed }
+      }
+      return parsed
     } catch (error) {
       console.error(`Error reading localStorage key "${key}":`, error)
       return initialValue
