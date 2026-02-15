@@ -18,6 +18,7 @@ import { UserMenu } from '@/components/auth/user-menu'
 import { LoginForm } from '@/components/auth/login-form'
 import { SignUpForm } from '@/components/auth/signup-form'
 import { Button } from '@/components/ui/button'
+import { InviteAcceptModal } from '@/components/auth/invite-accept-modal'
 
 const STORAGE_KEY = 'netflix-imdb-country'
 const FILTERS_STORAGE_KEY = 'netflix-imdb-filters'
@@ -159,6 +160,9 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Invite accept modal */}
+      {user && <InviteAcceptModal />}
 
       {/* Main content */}
       <div

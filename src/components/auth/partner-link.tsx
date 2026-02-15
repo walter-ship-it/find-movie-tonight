@@ -5,15 +5,16 @@ import { Button } from '@/components/ui/button'
 
 type PartnerState =
   | { status: 'loading' }
-  | { status: 'linked'; partnerName: string; partnerId: string }
-  | { status: 'unlinked-available'; partnerName: string; partnerId: string }
-  | { status: 'unlinked-none' }
+  | { status: 'linked'; partnerName: string }
+  | { status: 'has-invite'; inviteCode: string; expiresAt: string }
+  | { status: 'no-invite' }
   | { status: 'error'; message: string }
 
 export function PartnerLink() {
   const { user } = useAuth()
   const [state, setState] = useState<PartnerState>({ status: 'loading' })
   const [actionLoading, setActionLoading] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const fetchPartnerState = useCallback(async () => {
     if (!user) return
@@ -21,7 +22,7 @@ export function PartnerLink() {
     setState({ status: 'loading' })
 
     try {
-      // 1. Query own profile for partner_id
+      // 1. Check if linked
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('partner_id')
@@ -33,13 +34,11 @@ export function PartnerLink() {
         return
       }
 
-      // Profile missing — user was created before profiles table/trigger existed
       if (!profile) {
         setState({ status: 'error', message: 'No profile found. Sign out and create a fresh account.' })
         return
       }
 
-      // 2. If linked, fetch partner display name
       if (profile.partner_id) {
         const { data: partner, error: partnerError } = await supabase
           .from('profiles')
@@ -55,28 +54,26 @@ export function PartnerLink() {
         setState({
           status: 'linked',
           partnerName: partner.display_name || 'Partner',
-          partnerId: profile.partner_id,
         })
         return
       }
 
-      // 3. If unlinked, check for available partners
-      const { data: available, error: availableError } = await supabase
-        .rpc('get_available_partners')
+      // 2. Check for existing invite
+      const { data: invite, error: inviteError } = await supabase.rpc('get_my_active_invite')
 
-      if (availableError) {
-        setState({ status: 'error', message: availableError.message })
+      if (inviteError) {
+        setState({ status: 'error', message: inviteError.message })
         return
       }
 
-      if (available && available.length > 0) {
+      if (invite) {
         setState({
-          status: 'unlinked-available',
-          partnerName: available[0].display_name || 'User',
-          partnerId: available[0].id,
+          status: 'has-invite',
+          inviteCode: invite.invite_code,
+          expiresAt: invite.expires_at,
         })
       } else {
-        setState({ status: 'unlinked-none' })
+        setState({ status: 'no-invite' })
       }
     } catch {
       setState({ status: 'error', message: 'Failed to fetch partner status' })
@@ -87,21 +84,44 @@ export function PartnerLink() {
     fetchPartnerState()
   }, [fetchPartnerState])
 
-  const handleLink = async (targetUserId: string) => {
+  const handleGenerateInvite = async () => {
     setActionLoading(true)
     try {
-      const { error } = await supabase.rpc('link_partner', {
-        target_user_id: targetUserId,
-      })
-
+      const { data, error } = await supabase.rpc('create_partner_invite')
       if (error) {
         setState({ status: 'error', message: error.message })
         return
       }
-
-      await fetchPartnerState()
+      setState({
+        status: 'has-invite',
+        inviteCode: data.invite_code,
+        expiresAt: data.expires_at,
+      })
     } catch {
-      setState({ status: 'error', message: 'Failed to link partner' })
+      setState({ status: 'error', message: 'Failed to generate invite' })
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleCopyLink = async (code: string) => {
+    const url = `${window.location.origin}${window.location.pathname}?invite=${code}`
+    await navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleCancelInvite = async () => {
+    setActionLoading(true)
+    try {
+      const { error } = await supabase.rpc('cancel_partner_invite')
+      if (error) {
+        setState({ status: 'error', message: error.message })
+        return
+      }
+      setState({ status: 'no-invite' })
+    } catch {
+      setState({ status: 'error', message: 'Failed to cancel invite' })
     } finally {
       setActionLoading(false)
     }
@@ -111,12 +131,10 @@ export function PartnerLink() {
     setActionLoading(true)
     try {
       const { error } = await supabase.rpc('unlink_partner')
-
       if (error) {
         setState({ status: 'error', message: error.message })
         return
       }
-
       await fetchPartnerState()
     } catch {
       setState({ status: 'error', message: 'Failed to unlink partner' })
@@ -163,29 +181,42 @@ export function PartnerLink() {
     )
   }
 
-  if (state.status === 'unlinked-available') {
+  if (state.status === 'has-invite') {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-xs text-muted-foreground">
-          {state.partnerName} is available
-        </span>
+        <span className="text-xs font-mono text-primary">{state.inviteCode}</span>
         <Button
           variant="ghost"
           size="sm"
           className="h-6 px-2 text-xs text-primary hover:text-primary"
-          onClick={() => handleLink(state.partnerId)}
+          onClick={() => handleCopyLink(state.inviteCode)}
           disabled={actionLoading}
         >
-          {actionLoading ? 'Linking...' : 'Link'}
+          {copied ? 'Copied!' : 'Copy link'}
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-6 px-2 text-xs text-muted-foreground hover:text-destructive"
+          onClick={handleCancelInvite}
+          disabled={actionLoading}
+        >
+          Cancel
         </Button>
       </div>
     )
   }
 
-  // unlinked-none
+  // no-invite
   return (
-    <div className="text-xs text-muted-foreground/70">
-      Your partner hasn't signed up yet
-    </div>
+    <Button
+      variant="ghost"
+      size="sm"
+      className="h-6 px-2 text-xs text-muted-foreground hover:text-primary"
+      onClick={handleGenerateInvite}
+      disabled={actionLoading}
+    >
+      {actionLoading ? 'Generating...' : 'Invite partner'}
+    </Button>
   )
 }
