@@ -26,10 +26,16 @@ export function PartnerLink() {
         .from('profiles')
         .select('partner_id')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
 
       if (profileError) {
         setState({ status: 'error', message: profileError.message })
+        return
+      }
+
+      // Profile missing — user was created before profiles table/trigger existed
+      if (!profile) {
+        setState({ status: 'error', message: 'No profile found. Sign out and create a fresh account.' })
         return
       }
 
