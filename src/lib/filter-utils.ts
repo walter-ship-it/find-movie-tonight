@@ -5,13 +5,15 @@ export interface MovieFilters {
   runtimeRange: [number | null, number | null]
   minRating: number | null
   genres: string[]
+  streamingProviders: number[] // Provider IDs
 }
 
 export const initialFilters: MovieFilters = {
   yearRange: [null, null],
   runtimeRange: [null, null],
   minRating: null,
-  genres: []
+  genres: [],
+  streamingProviders: []
 }
 
 function applyYearFilter(movies: Movie[], range: [number | null, number | null]): Movie[] {
@@ -62,6 +64,26 @@ function applyGenreFilter(movies: Movie[], selectedGenres: string[]): Movie[] {
   })
 }
 
+function applyStreamingProviderFilter(movies: Movie[], selectedProviders: number[]): Movie[] {
+  if (selectedProviders.length === 0) return movies
+
+  return movies.filter(movie => {
+    // Check new streaming_providers field
+    if (movie.streaming_providers && movie.streaming_providers.length > 0) {
+      return movie.streaming_providers.some(provider => 
+        selectedProviders.includes(provider.provider_id)
+      )
+    }
+    
+    // Backward compatibility: check on_netflix for Netflix (provider_id: 8)
+    if (selectedProviders.includes(8) && movie.on_netflix) {
+      return true
+    }
+    
+    return false
+  })
+}
+
 export function applyFilters(movies: Movie[], filters: MovieFilters): Movie[] {
   let result = movies
 
@@ -69,6 +91,7 @@ export function applyFilters(movies: Movie[], filters: MovieFilters): Movie[] {
   result = applyRuntimeFilter(result, filters.runtimeRange)
   result = applyRatingFilter(result, filters.minRating)
   result = applyGenreFilter(result, filters.genres)
+  result = applyStreamingProviderFilter(result, filters.streamingProviders)
 
   return result
 }
@@ -81,6 +104,28 @@ export function getGenresFromMovies(movies: Movie[]): string[] {
   })
 
   return Array.from(genreSet).sort()
+}
+
+export function getStreamingProvidersFromMovies(movies: Movie[]): { id: number; name: string }[] {
+  const providerMap = new Map<number, string>()
+
+  movies.forEach(movie => {
+    if (movie.streaming_providers) {
+      movie.streaming_providers.forEach(provider => {
+        if (!providerMap.has(provider.provider_id)) {
+          providerMap.set(provider.provider_id, provider.name)
+        }
+      })
+    }
+    // Backward compatibility
+    if (movie.on_netflix && !providerMap.has(8)) {
+      providerMap.set(8, 'Netflix')
+    }
+  })
+
+  return Array.from(providerMap.entries())
+    .map(([id, name]) => ({ id, name }))
+    .sort((a, b) => a.name.localeCompare(b.name))
 }
 
 export function getYearRange(movies: Movie[]): [number, number] {
@@ -102,6 +147,7 @@ export function hasActiveFilters(filters: MovieFilters): boolean {
     filters.runtimeRange[0] !== null ||
     filters.runtimeRange[1] !== null ||
     filters.minRating !== null ||
-    filters.genres.length > 0
+    filters.genres.length > 0 ||
+    filters.streamingProviders.length > 0
   )
 }

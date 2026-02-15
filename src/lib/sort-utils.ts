@@ -1,6 +1,6 @@
 import { Movie } from './supabase'
 
-export type SortKey = 'title' | 'year' | 'runtime' | 'imdb_rating'
+export type SortKey = 'title' | 'year' | 'runtime' | 'imdb_rating' | 'rotten_tomatoes_score' | 'metacritic_score'
 export type SortDirection = 'asc' | 'desc'
 
 export interface SortConfig {

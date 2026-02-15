@@ -9,6 +9,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+export interface StreamingProvider {
+  provider_id: number
+  name: string
+  url: string
+}
+
 export interface Movie {
   id: string
   tmdb_id: number
@@ -22,10 +28,23 @@ export interface Movie {
   genres: string[] | null
   imdb_rating: number | null
   imdb_votes: number | null
+  rotten_tomatoes_score: number | null
+  metacritic_score: number | null
   country: string
   on_netflix: boolean
   netflix_url: string | null
+  streaming_providers: StreamingProvider[] | null
   last_updated: string
+}
+
+// Streaming provider metadata for UI
+export const STREAMING_PROVIDER_INFO: Record<number, { name: string; color: string }> = {
+  8: { name: 'Netflix', color: 'text-red-500' },
+  9: { name: 'Prime Video', color: 'text-cyan-400' },
+  337: { name: 'Disney+', color: 'text-blue-400' },
+  384: { name: 'HBO Max', color: 'text-purple-400' },
+  350: { name: 'Apple TV+', color: 'text-gray-300' },
+  531: { name: 'Paramount+', color: 'text-blue-500' },
 }
 
 export async function fetchMoviesByCountry(country: string): Promise<Movie[]> {

@@ -5,12 +5,14 @@ import { Slider } from '@/components/ui/slider'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Checkbox } from '@/components/ui/checkbox'
 import { MovieFilters as Filters, hasActiveFilters as checkActiveFilters } from '@/lib/filter-utils'
+import { STREAMING_PROVIDER_INFO } from '@/lib/supabase'
 import { cn } from '@/lib/utils'
 
 interface MovieFiltersProps {
   filters: Filters
   onFiltersChange: (filters: Filters) => void
   availableGenres: string[]
+  availableProviders: { id: number; name: string }[]
   yearRange: [number, number]
   runtimeRange: [number, number]
 }
@@ -19,6 +21,7 @@ export function MovieFilters({
   filters,
   onFiltersChange,
   availableGenres,
+  availableProviders,
   yearRange,
   runtimeRange
 }: MovieFiltersProps) {
@@ -32,7 +35,8 @@ export function MovieFilters({
       yearRange: [null, null],
       runtimeRange: [null, null],
       minRating: null,
-      genres: []
+      genres: [],
+      streamingProviders: []
     }
     onFiltersChange({ ...filters, [key]: defaults[key] })
   }
@@ -42,7 +46,8 @@ export function MovieFilters({
       yearRange: [null, null],
       runtimeRange: [null, null],
       minRating: null,
-      genres: []
+      genres: [],
+      streamingProviders: []
     })
   }
 
@@ -54,7 +59,7 @@ export function MovieFilters({
   return (
     <div className="space-y-4 mb-6">
       {/* Filter Controls Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Year Range */}
         <div className="space-y-2">
           <label id="year-range-label" className="text-sm font-medium text-cyan-300">Year Range</label>
@@ -161,6 +166,55 @@ export function MovieFilters({
             </PopoverContent>
           </Popover>
         </div>
+
+        {/* Streaming Provider Multi-Select */}
+        <div className="space-y-2">
+          <label id="providers-label" className="text-sm font-medium text-cyan-300">Streaming</label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="glass" className="w-full justify-start" aria-labelledby="providers-label">
+                {filters.streamingProviders.length > 0
+                  ? `${filters.streamingProviders.length} selected`
+                  : 'All Providers'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className={cn(
+              "w-[220px] p-3",
+              "bg-card/90 backdrop-blur-xl border-white/10",
+              "shadow-glass-lg"
+            )}>
+              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                {availableProviders.map(provider => {
+                  const providerInfo = STREAMING_PROVIDER_INFO[provider.id]
+                  return (
+                    <div key={provider.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`provider-${provider.id}`}
+                        checked={filters.streamingProviders.includes(provider.id)}
+                        onCheckedChange={(checked) => {
+                          const newProviders = checked
+                            ? [...filters.streamingProviders, provider.id]
+                            : filters.streamingProviders.filter(p => p !== provider.id)
+                          updateFilter('streamingProviders', newProviders)
+                        }}
+                        className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                      />
+                      <label
+                        htmlFor={`provider-${provider.id}`}
+                        className={cn(
+                          "text-sm cursor-pointer flex-1 transition-colors",
+                          providerInfo?.color || 'hover:text-primary'
+                        )}
+                      >
+                        {provider.name}
+                      </label>
+                    </div>
+                  )
+                })}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
 
       {/* Active Filter Chips */}
@@ -201,6 +255,23 @@ export function MovieFilters({
               {genre}
             </FilterChip>
           ))}
+
+          {/* Streaming provider chips */}
+          {filters.streamingProviders.map(providerId => {
+            const providerInfo = STREAMING_PROVIDER_INFO[providerId]
+            const provider = availableProviders.find(p => p.id === providerId)
+            return (
+              <FilterChip
+                key={providerId}
+                onRemove={() => {
+                  const newProviders = filters.streamingProviders.filter(p => p !== providerId)
+                  updateFilter('streamingProviders', newProviders)
+                }}
+              >
+                {providerInfo?.name || provider?.name || `Provider ${providerId}`}
+              </FilterChip>
+            )
+          })}
 
           {/* Clear All button */}
           <Button

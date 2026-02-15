@@ -1,5 +1,5 @@
 import { ExternalLink } from 'lucide-react'
-import { Movie } from '@/lib/supabase'
+import { Movie, STREAMING_PROVIDER_INFO } from '@/lib/supabase'
 import { Badge } from '@/components/ui/badge'
 import {
   Table,
@@ -37,10 +37,16 @@ export function MovieTable({ movies, sortConfig, onSortChange }: MovieTableProps
               Runtime
             </SortableTableHead>
             <TableHead>Genres</TableHead>
-            <SortableTableHead sortKey="imdb_rating" currentSort={sortConfig} onSortChange={onSortChange} className="w-[100px]">
+            <SortableTableHead sortKey="imdb_rating" currentSort={sortConfig} onSortChange={onSortChange} className="w-[70px]">
               IMDb
             </SortableTableHead>
-            <TableHead className="w-[100px]">Links</TableHead>
+            <SortableTableHead sortKey="rotten_tomatoes_score" currentSort={sortConfig} onSortChange={onSortChange} className="w-[60px]">
+              RT
+            </SortableTableHead>
+            <SortableTableHead sortKey="metacritic_score" currentSort={sortConfig} onSortChange={onSortChange} className="w-[60px]">
+              MC
+            </SortableTableHead>
+            <TableHead className="w-[140px]">Streaming</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="animate-reveal-stagger">
@@ -96,6 +102,7 @@ export function MovieTable({ movies, sortConfig, onSortChange }: MovieTableProps
                   ))}
                 </div>
               </TableCell>
+              {/* IMDb Rating */}
               <TableCell className="p-2">
                 {movie.imdb_rating ? (
                   <Badge variant="rating" className="gap-1">
@@ -106,34 +113,91 @@ export function MovieTable({ movies, sortConfig, onSortChange }: MovieTableProps
                   <span className="text-muted-foreground">—</span>
                 )}
               </TableCell>
+              {/* Rotten Tomatoes */}
               <TableCell className="p-2">
-                <div className="flex gap-2">
+                {movie.rotten_tomatoes_score !== null ? (
+                  <Badge variant="outline" className="gap-1 border-red-500/50 text-red-400">
+                    <span>🍅</span>
+                    <span>{movie.rotten_tomatoes_score}%</span>
+                  </Badge>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </TableCell>
+              {/* Metacritic */}
+              <TableCell className="p-2">
+                {movie.metacritic_score !== null ? (
+                  <Badge 
+                    variant="outline" 
+                    className={cn(
+                      "gap-1",
+                      movie.metacritic_score >= 75 && "border-green-500/50 text-green-400",
+                      movie.metacritic_score >= 50 && movie.metacritic_score < 75 && "border-yellow-500/50 text-yellow-400",
+                      movie.metacritic_score < 50 && "border-red-500/50 text-red-400"
+                    )}
+                  >
+                    <span className="font-bold text-xs">M</span>
+                    <span>{movie.metacritic_score}</span>
+                  </Badge>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </TableCell>
+              {/* Streaming Providers */}
+              <TableCell className="p-2">
+                <div className="flex flex-wrap gap-1">
+                  {movie.streaming_providers && movie.streaming_providers.length > 0 ? (
+                    movie.streaming_providers.map((provider) => {
+                      const providerInfo = STREAMING_PROVIDER_INFO[provider.provider_id]
+                      return (
+                        <a
+                          key={provider.provider_id}
+                          href={provider.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={cn(
+                            "text-xs flex items-center gap-0.5",
+                            "transition-all duration-300 hover:scale-105",
+                            providerInfo?.color || 'text-muted-foreground'
+                          )}
+                          title={providerInfo?.name || provider.name}
+                        >
+                          {providerInfo?.name || provider.name}
+                          <ExternalLink className="h-2.5 w-2.5" />
+                        </a>
+                      )
+                    })
+                  ) : movie.netflix_url ? (
+                    // Backward compatibility
+                    <a
+                      href={movie.netflix_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        "text-neon-pink hover:text-pink-300 text-xs flex items-center gap-0.5",
+                        "transition-all duration-300"
+                      )}
+                    >
+                      Netflix
+                      <ExternalLink className="h-2.5 w-2.5" />
+                    </a>
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
+                  
+                  {/* IMDb link */}
                   {movie.imdb_id && (
                     <a
                       href={`https://www.imdb.com/title/${movie.imdb_id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={cn(
-                        "text-neon-cyan hover:text-cyan-300 text-sm flex items-center gap-1",
+                        "text-neon-cyan hover:text-cyan-300 text-xs flex items-center gap-0.5",
                         "transition-all duration-300"
                       )}
                     >
                       IMDb
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
-                  {movie.netflix_url && (
-                    <a
-                      href={movie.netflix_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={cn(
-                        "text-neon-pink hover:text-pink-300 text-sm flex items-center gap-1",
-                        "transition-all duration-300"
-                      )}
-                    >
-                      Netflix
-                      <ExternalLink className="h-3 w-3" />
+                      <ExternalLink className="h-2.5 w-2.5" />
                     </a>
                   )}
                 </div>

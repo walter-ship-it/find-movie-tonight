@@ -1,5 +1,5 @@
 import { ExternalLink } from 'lucide-react'
-import { Movie } from '@/lib/supabase'
+import { Movie, STREAMING_PROVIDER_INFO } from '@/lib/supabase'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -68,15 +68,40 @@ export function MovieCard({ movie, index = 0 }: MovieCardProps) {
                 {movie.runtime && <span>• {movie.runtime} min</span>}
               </div>
 
-              {/* IMDb Rating with glow */}
-              {movie.imdb_rating && (
-                <div className="mt-2">
+              {/* Ratings row */}
+              <div className="flex flex-wrap items-center gap-2 mt-2">
+                {/* IMDb Rating */}
+                {movie.imdb_rating && (
                   <Badge variant="rating" className="gap-1">
                     <span>⭐</span>
                     <span>{movie.imdb_rating.toFixed(1)}</span>
                   </Badge>
-                </div>
-              )}
+                )}
+                
+                {/* Rotten Tomatoes */}
+                {movie.rotten_tomatoes_score !== null && (
+                  <Badge variant="outline" className="gap-1 border-red-500/50 text-red-400">
+                    <span>🍅</span>
+                    <span>{movie.rotten_tomatoes_score}%</span>
+                  </Badge>
+                )}
+                
+                {/* Metacritic */}
+                {movie.metacritic_score !== null && (
+                  <Badge 
+                    variant="outline" 
+                    className={cn(
+                      "gap-1",
+                      movie.metacritic_score >= 75 && "border-green-500/50 text-green-400",
+                      movie.metacritic_score >= 50 && movie.metacritic_score < 75 && "border-yellow-500/50 text-yellow-400",
+                      movie.metacritic_score < 50 && "border-red-500/50 text-red-400"
+                    )}
+                  >
+                    <span className="font-bold text-xs">M</span>
+                    <span>{movie.metacritic_score}</span>
+                  </Badge>
+                )}
+              </div>
 
               {/* Genres with neon badges */}
               {movie.genres && movie.genres.length > 0 && (
@@ -96,9 +121,67 @@ export function MovieCard({ movie, index = 0 }: MovieCardProps) {
                 </div>
               )}
 
-              {/* Links with neon colors */}
-              <div className="flex gap-3 mt-3">
-                {movie.imdb_id && (
+              {/* Streaming provider links */}
+              <div className="flex flex-wrap gap-2 mt-3">
+                {movie.streaming_providers && movie.streaming_providers.length > 0 ? (
+                  movie.streaming_providers.map((provider) => {
+                    const providerInfo = STREAMING_PROVIDER_INFO[provider.provider_id]
+                    return (
+                      <a
+                        key={provider.provider_id}
+                        href={provider.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          "text-sm flex items-center gap-1",
+                          "transition-all duration-300",
+                          "hover:scale-105",
+                          providerInfo?.color || 'text-muted-foreground'
+                        )}
+                      >
+                        {providerInfo?.name || provider.name}
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )
+                  })
+                ) : (
+                  // Fallback to old netflix_url for backward compatibility
+                  <>
+                    {movie.imdb_id && (
+                      <a
+                        href={`https://www.imdb.com/title/${movie.imdb_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          "text-neon-cyan hover:text-cyan-300 text-sm flex items-center gap-1",
+                          "transition-all duration-300",
+                          "hover:text-glow-cyan"
+                        )}
+                      >
+                        IMDb
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
+                    {movie.netflix_url && (
+                      <a
+                        href={movie.netflix_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          "text-neon-pink hover:text-pink-300 text-sm flex items-center gap-1",
+                          "transition-all duration-300",
+                          "hover:text-glow-pink"
+                        )}
+                      >
+                        Netflix
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
+                  </>
+                )}
+                
+                {/* Always show IMDb link */}
+                {movie.imdb_id && movie.streaming_providers && movie.streaming_providers.length > 0 && (
                   <a
                     href={`https://www.imdb.com/title/${movie.imdb_id}`}
                     target="_blank"
@@ -110,21 +193,6 @@ export function MovieCard({ movie, index = 0 }: MovieCardProps) {
                     )}
                   >
                     IMDb
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                )}
-                {movie.netflix_url && (
-                  <a
-                    href={movie.netflix_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={cn(
-                      "text-neon-pink hover:text-pink-300 text-sm flex items-center gap-1",
-                      "transition-all duration-300",
-                      "hover:text-glow-pink"
-                    )}
-                  >
-                    Netflix
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 )}

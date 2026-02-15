@@ -27,6 +27,18 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 const tmdbLimit = pLimit(50) // 50 concurrent requests
 const omdbLimit = pLimit(10) // 10 concurrent requests
 
+// Streaming provider configuration
+const STREAMING_PROVIDERS: Record<number, string> = {
+  8: 'Netflix',
+  9: 'Amazon Prime Video',
+  337: 'Disney+',
+  384: 'HBO Max',
+  350: 'Apple TV+',
+  531: 'Paramount+',
+}
+
+const DEFAULT_PROVIDER_IDS = Object.keys(STREAMING_PROVIDERS).map(Number)
+
 // TMDb types
 interface TMDbMovie {
   id: number
@@ -61,46 +73,69 @@ interface TMDbWatchProviderResult {
 }
 
 // OMDb types
+interface OMDbRating {
+  Source: string
+  Value: string
+}
+
 interface OMDbResponse {
   Response: string
   imdbRating?: string
   imdbVotes?: string
   imdbID?: string
+  Ratings?: OMDbRating[]
+}
+
+// Streaming provider type for database
+interface StreamingProvider {
+  provider_id: number
+  name: string
+  url: string
 }
 
 // Parse CLI arguments
-function parseArgs(): { country: string } {
+function parseArgs(): { country: string; providers: number[] } {
   const args = process.argv.slice(2)
   let country = ''
+  let providers: number[] = DEFAULT_PROVIDER_IDS
 
   for (const arg of args) {
     if (arg.startsWith('--country=')) {
       country = arg.split('=')[1].toUpperCase()
     }
+    if (arg.startsWith('--providers=')) {
+      const providerStr = arg.split('=')[1]
+      providers = providerStr.split(',').map(p => parseInt(p.trim(), 10)).filter(p => !isNaN(p))
+    }
   }
 
   if (!country) {
-    console.error('Usage: npm run sync -- --country=SE')
+    console.error('Usage: npm run sync -- --country=SE [--providers=8,9,337]')
     console.error('Supported countries: SE, US, GB, DE, CA, FR, IT, ES, NL, ZA')
+    console.error('Available streaming providers:')
+    Object.entries(STREAMING_PROVIDERS).forEach(([id, name]) => {
+      console.error(`  ${id}: ${name}`)
+    })
     process.exit(1)
   }
 
-  return { country }
+  return { country, providers }
 }
 
-// Fetch Netflix movies from TMDb Discover API
-async function fetchNetflixMovies(country: string): Promise<TMDbMovie[]> {
+// Fetch movies from TMDb Discover API for specified streaming providers
+async function fetchStreamingMovies(country: string, providers: number[]): Promise<TMDbMovie[]> {
   const movies: TMDbMovie[] = []
   let page = 1
   let totalPages = 1
 
-  console.log(`Fetching Netflix movies for ${country}...`)
+  const providerNames = providers.map(id => STREAMING_PROVIDERS[id] || `Provider ${id}`).join(', ')
+  console.log(`Fetching movies for ${country} from: ${providerNames}...`)
 
   while (page <= totalPages && page <= 25) { // TMDb limits to 500 results (20 per page * 25 pages)
     const url = new URL('https://api.themoviedb.org/3/discover/movie')
     url.searchParams.set('api_key', TMDB_API_KEY!)
     url.searchParams.set('watch_region', country)
-    url.searchParams.set('with_watch_providers', '8') // Netflix provider ID
+    url.searchParams.set('with_watch_providers', providers.join('|')) // OR condition for multiple providers
     url.searchParams.set('sort_by', 'vote_average.desc')
     url.searchParams.set('vote_count.gte', '100') // Only movies with meaningful ratings
     url.searchParams.set('page', page.toString())
@@ -126,7 +161,7 @@ async function fetchNetflixMovies(country: string): Promise<TMDbMovie[]> {
     await sleep(50)
   }
 
-  console.log(`Total: ${movies.length} Netflix movies found for ${country}`)
+  console.log(`Total: ${movies.length} movies found for ${country}`)
   return movies
 }
 
@@ -145,32 +180,79 @@ async function fetchMovieDetails(movieId: number): Promise<TMDbMovieDetails | nu
   })
 }
 
-// Fetch watch providers to get Netflix URL
-async function fetchWatchProviders(movieId: number, country: string): Promise<string | null> {
+// Fetch watch providers and return all matching providers
+async function fetchWatchProviders(
+  movieId: number, 
+  country: string, 
+  targetProviders: number[]
+): Promise<StreamingProvider[]> {
   return tmdbLimit(async () => {
     const url = `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=${TMDB_API_KEY}`
     const response = await fetch(url)
     
     if (!response.ok) {
-      return null
+      return []
     }
 
     const data = await response.json()
     const countryData: TMDbWatchProviderResult = data.results?.[country]
     
-    // Check if Netflix is in flatrate providers
-    const hasNetflix = countryData?.flatrate?.some(p => p.provider_id === 8)
-    
-    if (hasNetflix && countryData?.link) {
-      return countryData.link
+    if (!countryData?.flatrate) {
+      return []
     }
 
-    return null
+    // Find all matching providers
+    const matchingProviders: StreamingProvider[] = []
+    
+    for (const provider of countryData.flatrate) {
+      if (targetProviders.includes(provider.provider_id)) {
+        matchingProviders.push({
+          provider_id: provider.provider_id,
+          name: STREAMING_PROVIDERS[provider.provider_id] || provider.provider_name,
+          url: countryData.link || ''
+        })
+      }
+    }
+
+    return matchingProviders
   })
 }
 
-// Fetch IMDb rating from OMDb
-async function fetchIMDbRating(imdbId: string): Promise<{ rating: number | null; votes: number | null }> {
+// Parse ratings from OMDb response
+function parseOMDbRatings(ratings?: OMDbRating[]): { 
+  rottenTomatoes: number | null
+  metacritic: number | null 
+} {
+  let rottenTomatoes: number | null = null
+  let metacritic: number | null = null
+
+  if (!ratings) {
+    return { rottenTomatoes, metacritic }
+  }
+
+  for (const rating of ratings) {
+    if (rating.Source === 'Rotten Tomatoes') {
+      // Format: "85%"
+      const value = parseInt(rating.Value.replace('%', ''), 10)
+      rottenTomatoes = isNaN(value) ? null : value
+    }
+    if (rating.Source === 'Metacritic') {
+      // Format: "75/100"
+      const value = parseInt(rating.Value.split('/')[0], 10)
+      metacritic = isNaN(value) ? null : value
+    }
+  }
+
+  return { rottenTomatoes, metacritic }
+}
+
+// Fetch IMDb rating and other ratings from OMDb
+async function fetchOMDbData(imdbId: string): Promise<{ 
+  rating: number | null
+  votes: number | null
+  rottenTomatoes: number | null
+  metacritic: number | null
+}> {
   return omdbLimit(async () => {
     // Add small delay for OMDb rate limiting (10 req/sec)
     await sleep(100)
@@ -179,13 +261,13 @@ async function fetchIMDbRating(imdbId: string): Promise<{ rating: number | null;
     const response = await fetch(url)
     
     if (!response.ok) {
-      return { rating: null, votes: null }
+      return { rating: null, votes: null, rottenTomatoes: null, metacritic: null }
     }
 
     const data: OMDbResponse = await response.json()
     
     if (data.Response !== 'True') {
-      return { rating: null, votes: null }
+      return { rating: null, votes: null, rottenTomatoes: null, metacritic: null }
     }
 
     const rating = data.imdbRating && data.imdbRating !== 'N/A' 
@@ -196,7 +278,9 @@ async function fetchIMDbRating(imdbId: string): Promise<{ rating: number | null;
       ? parseInt(data.imdbVotes.replace(/,/g, ''), 10)
       : null
 
-    return { rating, votes }
+    const { rottenTomatoes, metacritic } = parseOMDbRatings(data.Ratings)
+
+    return { rating, votes, rottenTomatoes, metacritic }
   })
 }
 
@@ -205,13 +289,15 @@ function sleep(ms: number): Promise<void> {
 }
 
 // Main sync function
-async function syncMovies(country: string): Promise<void> {
-  console.log(`\n🎬 Starting sync for country: ${country}\n`)
+async function syncMovies(country: string, providers: number[]): Promise<void> {
+  const providerNames = providers.map(id => STREAMING_PROVIDERS[id] || `Provider ${id}`).join(', ')
+  console.log(`\n🎬 Starting sync for country: ${country}`)
+  console.log(`📺 Streaming providers: ${providerNames}\n`)
 
-  // Step 1: Fetch Netflix movies from TMDb
-  const netflixMovies = await fetchNetflixMovies(country)
+  // Step 1: Fetch movies from TMDb
+  const streamingMovies = await fetchStreamingMovies(country, providers)
   
-  if (netflixMovies.length === 0) {
+  if (streamingMovies.length === 0) {
     console.log('No movies found. Exiting.')
     return
   }
@@ -221,9 +307,9 @@ async function syncMovies(country: string): Promise<void> {
   let successful = 0
   let failed = 0
 
-  for (const movie of netflixMovies) {
+  for (const movie of streamingMovies) {
     processed++
-    const progress = `[${processed}/${netflixMovies.length}]`
+    const progress = `[${processed}/${streamingMovies.length}]`
 
     try {
       // Fetch detailed movie info
@@ -235,18 +321,25 @@ async function syncMovies(country: string): Promise<void> {
         continue
       }
 
-      // Fetch Netflix URL
-      const netflixUrl = await fetchWatchProviders(movie.id, country)
+      // Fetch streaming providers
+      const streamingProviders = await fetchWatchProviders(movie.id, country, providers)
 
-      // Fetch IMDb rating if we have an imdb_id
+      // Fetch OMDb data (IMDb rating + RT + Metacritic)
       let imdbRating: number | null = null
       let imdbVotes: number | null = null
+      let rottenTomatoes: number | null = null
+      let metacritic: number | null = null
 
       if (details.imdb_id) {
-        const omdbData = await fetchIMDbRating(details.imdb_id)
+        const omdbData = await fetchOMDbData(details.imdb_id)
         imdbRating = omdbData.rating
         imdbVotes = omdbData.votes
+        rottenTomatoes = omdbData.rottenTomatoes
+        metacritic = omdbData.metacritic
       }
+
+      // Check if Netflix is in the providers (for backward compatibility)
+      const netflixProvider = streamingProviders.find(p => p.provider_id === 8)
 
       // Prepare movie data for upsert
       const movieData = {
@@ -265,9 +358,14 @@ async function syncMovies(country: string): Promise<void> {
         genres: details.genres?.map(g => g.name) || null,
         imdb_rating: imdbRating,
         imdb_votes: imdbVotes,
+        rotten_tomatoes_score: rottenTomatoes,
+        metacritic_score: metacritic,
         country: country,
-        on_netflix: true,
-        netflix_url: netflixUrl,
+        // Backward compatibility fields
+        on_netflix: !!netflixProvider,
+        netflix_url: netflixProvider?.url || null,
+        // New streaming providers field
+        streaming_providers: streamingProviders,
         last_updated: new Date().toISOString(),
       }
 
@@ -281,7 +379,10 @@ async function syncMovies(country: string): Promise<void> {
         failed++
       } else {
         const ratingStr = imdbRating ? `⭐ ${imdbRating}` : '(no rating)'
-        console.log(`${progress} ✅ ${details.title} (${movieData.year}) ${ratingStr}`)
+        const rtStr = rottenTomatoes ? `🍅 ${rottenTomatoes}%` : ''
+        const mcStr = metacritic ? `Ⓜ️ ${metacritic}` : ''
+        const providersStr = streamingProviders.map(p => p.name).join(', ') || 'No providers'
+        console.log(`${progress} ✅ ${details.title} (${movieData.year}) ${ratingStr} ${rtStr} ${mcStr} [${providersStr}]`)
         successful++
       }
     } catch (err) {
@@ -298,8 +399,8 @@ async function syncMovies(country: string): Promise<void> {
 }
 
 // Run the sync
-const { country } = parseArgs()
-syncMovies(country)
+const { country, providers } = parseArgs()
+syncMovies(country, providers)
   .then(() => {
     console.log('\n✨ Done!')
     process.exit(0)

@@ -15,6 +15,10 @@ interface SortOption {
 const sortOptions: SortOption[] = [
   { key: 'imdb_rating', direction: 'desc', label: 'IMDb Rating (High to Low)' },
   { key: 'imdb_rating', direction: 'asc', label: 'IMDb Rating (Low to High)' },
+  { key: 'rotten_tomatoes_score', direction: 'desc', label: 'Rotten Tomatoes (High to Low)' },
+  { key: 'rotten_tomatoes_score', direction: 'asc', label: 'Rotten Tomatoes (Low to High)' },
+  { key: 'metacritic_score', direction: 'desc', label: 'Metacritic (High to Low)' },
+  { key: 'metacritic_score', direction: 'asc', label: 'Metacritic (Low to High)' },
   { key: 'title', direction: 'asc', label: 'Title (A to Z)' },
   { key: 'title', direction: 'desc', label: 'Title (Z to A)' },
   { key: 'year', direction: 'desc', label: 'Year (Newest First)' },
