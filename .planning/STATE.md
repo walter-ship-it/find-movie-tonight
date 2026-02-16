@@ -5,32 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Eliminate the "what should we watch?" debate — open the app, see what's available across your subscriptions, shortlist your picks, and land on a movie in under 5 minutes.
-**Current focus:** Phase 1 complete. Ready for Phase 2 - Personal Shortlists
+**Current focus:** Phase 2 - Personal Shortlists (Plan 1 of 2 complete)
 
 ## Current Position
 
-Phase: 1 of 4 COMPLETE (Authentication Foundation)
-Plan: All 3 plans complete + verified
-Status: Phase 1 verified and complete
-Last activity: 2026-02-15 — Phase 1 verified (5/5 success criteria passed). Partner linking evolved to invite code system.
+Phase: 2 of 4 IN PROGRESS (Personal Shortlists)
+Plan: 1 of 2 complete
+Status: 02-01 complete, 02-02 pending
+Last activity: 2026-02-16 — Completed 02-01: shortlist table migration + ShortlistContext with optimistic updates.
 
-Progress: [███░░░░░░░] 25%
+Progress: [████░░░░░░] 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3 (01-03 Task 1 done, Task 2 pending human verify)
+- Total plans completed: 4
 - Average duration: 2 min
-- Total execution time: 0.10 hours
+- Total execution time: 0.12 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-authentication-foundation | 3/3 | 6 min | 2 min |
+| 02-personal-shortlists | 1/2 | 1 min | 1 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (2 min), 01-03 (2 min)
+- Last 5 plans: 01-01 (2 min), 01-02 (2 min), 01-03 (2 min), 02-01 (1 min)
 - Trend: Consistent
 
 *Updated after each plan completion*
@@ -51,6 +52,9 @@ Recent decisions affecting current work:
 - Auth modal overlay in App.tsx — keeps SPA simple; no separate /login route needed
 - Magic link redirects to app root — AuthCallback mounted globally processes token_hash on any page load
 - PartnerLink in UserMenu (not App.tsx) — partner status is part of user identity display, keeps App.tsx simpler
+- Reused get_my_partner_id() for shortlist RLS — avoids recursion, consistent with profiles pattern
+- Optimistic Set updates with rollback — instant UI feedback for shortlist toggle
+- Cleanup flag pattern in useEffect — prevents state updates after user change mid-flight
 
 ### Pending Todos
 
@@ -65,10 +69,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-15
-Stopped at: Phase 1 complete and verified. Ready for Phase 2 planning.
+Last session: 2026-02-16
+Stopped at: Completed 02-01-PLAN.md (shortlist data foundation). Ready for 02-02-PLAN.md.
 Resume file: None
 
 ---
 *State initialized: 2026-02-10*
-*Last updated: 2026-02-15T18:30Z*
+*Last updated: 2026-02-16T10:24Z*
