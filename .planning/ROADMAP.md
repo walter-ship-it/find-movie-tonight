@@ -45,10 +45,11 @@ Plans:
   2. User can remove a movie from their shortlist
   3. User can view their complete shortlist with all movie details (ratings, runtime, platforms)
   4. Shortlist persists across sessions and devices
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] TBD during phase planning
+- [ ] 02-01-PLAN.md -- Shortlist table migration with RLS and ShortlistContext provider
+- [ ] 02-02-PLAN.md -- Heart toggle on MovieCard/MovieTable and Browse/Shortlist view switcher
 
 ### Phase 3: Shared Shortlists
 **Goal**: Partners can see each other's shortlists and identify shared picks in real-time
@@ -88,10 +89,10 @@ Note: Phase 4 can be developed in parallel with Phases 2-3 as it has no dependen
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Authentication Foundation | 3/3 | ✓ Complete | 2026-02-15 |
-| 2. Personal Shortlists | 0/TBD | Not started | - |
+| 2. Personal Shortlists | 0/2 | Planned | - |
 | 3. Shared Shortlists | 0/TBD | Not started | - |
 | 4. Platform Selection & Sync | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-02-10*
-*Last updated: 2026-02-15*
+*Last updated: 2026-02-16*
