@@ -5,33 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Eliminate the "what should we watch?" debate — open the app, see what's available across your subscriptions, shortlist your picks, and land on a movie in under 5 minutes.
-**Current focus:** Phase 2 - Personal Shortlists (Plan 1 of 2 complete)
+**Current focus:** Phase 2 - Personal Shortlists (COMPLETE)
 
 ## Current Position
 
-Phase: 2 of 4 IN PROGRESS (Personal Shortlists)
-Plan: 1 of 2 complete
-Status: 02-01 complete, 02-02 pending
-Last activity: 2026-02-16 — Completed 02-01: shortlist table migration + ShortlistContext with optimistic updates.
+Phase: 2 of 4 COMPLETE (Personal Shortlists)
+Plan: 2 of 2 complete
+Status: Phase 2 complete. Ready for Phase 3.
+Last activity: 2026-02-16 — Completed 02-02: shortlist UI with heart toggles and Browse/Shortlist view switcher.
 
-Progress: [████░░░░░░] 40%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: 2 min
-- Total execution time: 0.12 hours
+- Total execution time: 0.15 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-authentication-foundation | 3/3 | 6 min | 2 min |
-| 02-personal-shortlists | 1/2 | 1 min | 1 min |
+| 02-personal-shortlists | 2/2 | 3 min | 1.5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (2 min), 01-03 (2 min), 02-01 (1 min)
+- Last 5 plans: 01-02 (2 min), 01-03 (2 min), 02-01 (1 min), 02-02 (2 min)
 - Trend: Consistent
 
 *Updated after each plan completion*
@@ -55,6 +55,9 @@ Recent decisions affecting current work:
 - Reused get_my_partner_id() for shortlist RLS — avoids recursion, consistent with profiles pattern
 - Optimistic Set updates with rollback — instant UI feedback for shortlist toggle
 - Cleanup flag pattern in useEffect — prevents state updates after user change mid-flight
+- Filter loaded movies by shortlistedIds instead of separate query — simpler, avoids extra network call
+- Inline SVG hearts over lucide import — self-contained, no new dependency
+- onAuthRequired callback pattern — components delegate auth-gated actions to parent
 
 ### Pending Todos
 
@@ -70,9 +73,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Completed 02-01-PLAN.md (shortlist data foundation). Ready for 02-02-PLAN.md.
+Stopped at: Completed 02-02-PLAN.md (shortlist UI). Phase 2 complete. Ready for Phase 3 planning.
 Resume file: None
 
 ---
 *State initialized: 2026-02-10*
-*Last updated: 2026-02-16T10:24Z*
+*Last updated: 2026-02-16T12:28Z*
