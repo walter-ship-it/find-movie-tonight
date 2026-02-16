@@ -13,7 +13,7 @@ This roadmap takes an existing movie browsing app and transforms it into a colla
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Authentication Foundation** - User accounts with session persistence
-- [ ] **Phase 2: Personal Shortlists** - Individual movie lists with watch tracking
+- [x] **Phase 2: Personal Shortlists** - Individual movie lists with watch tracking
 - [ ] **Phase 3: Shared Shortlists** - Real-time collaboration between partners
 - [ ] **Phase 4: Platform Selection & Sync** - Per-user streaming platforms and automated catalog updates
 
@@ -48,8 +48,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Shortlist table migration with RLS and ShortlistContext provider
-- [ ] 02-02-PLAN.md -- Heart toggle on MovieCard/MovieTable and Browse/Shortlist view switcher
+- [x] 02-01-PLAN.md -- Shortlist table migration with RLS and ShortlistContext provider
+- [x] 02-02-PLAN.md -- Heart toggle on MovieCard/MovieTable and Browse/Shortlist view switcher
 
 ### Phase 3: Shared Shortlists
 **Goal**: Partners can see each other's shortlists and identify shared picks in real-time
@@ -89,7 +89,7 @@ Note: Phase 4 can be developed in parallel with Phases 2-3 as it has no dependen
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Authentication Foundation | 3/3 | ✓ Complete | 2026-02-15 |
-| 2. Personal Shortlists | 0/2 | Planned | - |
+| 2. Personal Shortlists | 2/2 | ✓ Complete | 2026-02-16 |
 | 3. Shared Shortlists | 0/TBD | Not started | - |
 | 4. Platform Selection & Sync | 0/TBD | Not started | - |
 
